@@ -1,698 +1,167 @@
-# PROMPT 1a68d8d9-2b2c-4c5a-a566-7fe422d035c0
+# PROMPT ad78664d-db83-48d3-8024-a47cc5d8711f
 
 
-I want you to rewrite the img_gen.ts file into a proper library with functions that can be called upon.
+I want my website to have a white background and use a deep blue ink color as the primary.
+Here are the colours I chose.
+primary: HEX=#000066 HSL=(240, 100, 20) OKLCH=oklch(23.07% 0.1598 264.05)
+secondary: HEX=#6666ff HSL=(240, 100, 70) oklch(59.81% 0.2213 277.36)
+accent: HEX=#e5e5ff HSL=(240, 100, 95) oklch(92.98% 0.0351 285.7)
 
-I also want you to append to it the image to svg function in the App.tsx file as it's own standalone function.
+edit the index.css file so that the theme is properly managed
+Find colours that would match the style
 
+# OUTPUT ad78664d-db83-48d3-8024-a47cc5d8711f
+Here is the updated `index.css` file to integrate your preferred colors into the theme while maintaining a balanced style.
 
-# OUTPUT 1a68d8d9-2b2c-4c5a-a566-7fe422d035c0
-Sure! Below is a refactored version of `img_gen.ts`, structured as a proper library with reusable functions. I have also included the image-to-SVG function from `App.tsx` as a standalone function within the library.
+### **Changes made:**
+- **Primary color:** Deep Blue (`#000066`)
+- **Secondary color:** Vibrant Blue (`#6666ff`)
+- **Accent color:** Soft Blue (`#e5e5ff`)
+- **Matching shades:**
+  - **Background:** White (`#ffffff`)
+  - **Foreground (Text on white):** Deep grayish blue to provide contrast
+  - **Muted (Subdued elements):** Lighter shades of grayish blue
+  - **Destructive:** A red tone (`#d33f49`) for error states
+  - **Charts:** Harmonized blues and purples for consistency
 
 ---
 
-### **Refactored `img_gen.ts` as a Library**
-**Filename:** `imageUtils.ts`
-```typescript
-import fs from "node:fs";
-import axios from "axios";
-import FormData from "form-data";
-import ImageTracer from "imagetracerjs";
+### **Updated `index.css` File:**
 
-const API_URL = "https://api.stability.ai/v2beta/stable-image";
-const API_KEY = "sk-MYAPIKEY"; // Replace with your actual API key
+```css
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
 
-const DEFAULT_HEADERS = {
-  Authorization: `Bearer ${API_KEY}`,
-  Accept: "image/*",
-};
+@custom-variant dark (&:is(.dark *));
 
-/**
- * Generate an image from a text prompt.
- * @param prompt The description of the image to generate.
- * @param outputPath The path to save the generated image.
- * @param model The model to use for generation (default: "sd3.5-large-turbo").
- * @param format The output format (default: "jpeg").
- */
-export async function generateImage(prompt: string, outputPath: string, model: string = "sd3.5-large-turbo", format: string = "jpeg") {
-  const payload = { prompt, output_format: format, model };
-
-  const response = await axios.postForm(
-    `${API_URL}/generate/sd3`,
-    axios.toFormData(payload, new FormData()),
-    {
-      validateStatus: undefined,
-      responseType: "arraybuffer",
-      headers: DEFAULT_HEADERS,
-    }
-  );
-
-  if (response.status === 200) {
-    fs.writeFileSync(outputPath, Buffer.from(response.data));
-    console.log(`Image saved to ${outputPath}`);
-  } else {
-    throw new Error(`${response.status}: ${response.data.toString()}`);
-  }
-}
-
-/**
- * Generate an image using another image as a styling reference.
- * @param imagePath Path to the input image used for style reference.
- * @param prompt Description of the image to generate.
- * @param outputPath Path to save the generated image.
- * @param format Output image format (default: "webp").
- */
-export async function generateImageWithStyle(imagePath: string, prompt: string, outputPath: string, format: string = "webp") {
-  const payload = {
-    image: fs.createReadStream(imagePath),
-    prompt,
-    output_format: format,
-  };
-
-  const response = await axios.postForm(
-    `${API_URL}/control/style`,
-    axios.toFormData(payload, new FormData()),
-    {
-      validateStatus: undefined,
-      responseType: "arraybuffer",
-      headers: DEFAULT_HEADERS,
-    }
-  );
-
-  if (response.status === 200) {
-    fs.writeFileSync(outputPath, Buffer.from(response.data));
-    console.log(`Styled image saved to ${outputPath}`);
-  } else {
-    throw new Error(`${response.status}: ${response.data.toString()}`);
-  }
-}
-
-/**
- * Edit an image using a mask.
- * @param imagePath Path to the original image.
- * @param maskPath Path to the mask image.
- * @param prompt Description of the edit to apply.
- * @param outputPath Path to save the edited image.
- * @param format Output image format (default: "webp").
- */
-export async function editImageWithMask(imagePath: string, maskPath: string, prompt: string, outputPath: string, format: string = "webp") {
-  const payload = {
-    image: fs.createReadStream(imagePath),
-    mask: fs.createReadStream(maskPath),
-    prompt,
-    output_format: format,
-  };
-
-  const response = await axios.postForm(
-    `${API_URL}/edit/inpaint`,
-    axios.toFormData(payload, new FormData()),
-    {
-      validateStatus: undefined,
-      responseType: "arraybuffer",
-      headers: DEFAULT_HEADERS,
-    }
-  );
-
-  if (response.status === 200) {
-    fs.writeFileSync(outputPath, Buffer.from(response.data));
-    console.log(`Edited image saved to ${outputPath}`);
-  } else {
-    throw new Error(`${response.status}: ${response.data.toString()}`);
-  }
-}
-
-/**
- * Convert an image to an SVG format.
- * @param imagePath Path to the input image.
- * @param outputPath Path to save the converted SVG.
- * @param colorMode Color mode for image tracing (default: "posterized2").
- */
-export function convertImageToSVG(imagePath: string, outputPath: string, colorMode: string = "posterized2") {
-  const reader = new FileReader();
+/* Light Theme */
+:root {
+  --background: oklch(1 0 0);                      /* White */
+  --foreground: oklch(0.2 0.032 270);              /* Dark Blue-Gray, for text */
+  --card: oklch(1 0 0);                            /* Matches background */
+  --card-foreground: oklch(0.2 0.032 270);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.032 270);
   
-  // Read file as DataURL
-  reader.onload = (e) => {
-    const imageUrl = e.target?.result as string;
-    ImageTracer.loadImage(imageUrl, (canvas) => {
-      const imgData = ImageTracer.getImgdata(canvas); // Extract ImageData from canvas
-      const svgString = ImageTracer.imagedataToSVG(imgData, colorMode); // Convert to SVG
-
-      // Save the SVG string to a file
-      fs.writeFileSync(outputPath, svgString);
-      console.log(`SVG saved to ${outputPath}`);
-    });
-  };
+  --primary: oklch(23.07% 0.1598 264.05);          /* Deep Blue */
+  --primary-foreground: oklch(98% 0 0);            /* White text on deep blue */
   
-  reader.readAsDataURL(fs.readFileSync(imagePath)); // Read file as data URL
+  --secondary: oklch(59.81% 0.2213 277.36);        /* Vibrant Blue */
+  --secondary-foreground: oklch(0.2 0.032 270);
+
+  --accent: oklch(92.98% 0.0351 285.7);           /* Light Blue */
+  --accent-foreground: oklch(0.2 0.032 270);
+
+  --muted: oklch(85% 0.04 270);                   /* Subtle bluish gray */
+  --muted-foreground: oklch(50% 0.07 270);       /* Slightly faded text */
+  
+  --destructive: oklch(60% 0.18 27);              /* Red for errors */
+  --destructive-foreground: oklch(96% 0 0);      /* White text on red */
+
+  --border: oklch(90% 0.02 270);                  /* Light grayish blue */
+  --input: oklch(90% 0.02 270);
+  --ring: oklch(40% 0.15 270);                   /* Strong blue for focus rings */
+
+  /* Chart colors for data visualizations */
+  --chart-1: oklch(35% 0.25 265);
+  --chart-2: oklch(60% 0.22 277);
+  --chart-3: oklch(45% 0.20 250);
+  --chart-4: oklch(65% 0.21 285);
+  --chart-5: oklch(50% 0.15 270);
+
+  --radius: 0.625rem;
+  
+  /* Sidebar color scheme */
+  --sidebar: oklch(95% 0.01 270);
+  --sidebar-foreground: oklch(0.2 0.032 270);
+  --sidebar-primary: oklch(23.07% 0.1598 264.05);
+  --sidebar-primary-foreground: oklch(98% 0 0);
+  --sidebar-accent: oklch(92.98% 0.0351 285.7);
+  --sidebar-accent-foreground: oklch(0.2 0.032 270);
+  --sidebar-border: oklch(85% 0.04 270);
+  --sidebar-ring: oklch(40% 0.15 270);
+}
+
+/* Dark Theme */
+.dark {
+  --background: oklch(0.15 0.02 270);            /* Dark blue-gray */
+  --foreground: oklch(92.98% 0.0351 285.7);      /* Light blue */
+  --card: oklch(0.15 0.02 270);
+  --card-foreground: oklch(92.98% 0.0351 285.7);
+  --popover: oklch(0.15 0.02 270);
+  --popover-foreground: oklch(92.98% 0.0351 285.7);
+
+  --primary: oklch(59.81% 0.2213 277.36);       /* Vibrant Blue */
+  --primary-foreground: oklch(0.15 0.02 270);
+  
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(92.98% 0.0351 285.7);
+
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(92.98% 0.0351 285.7);
+
+  --destructive: oklch(50% 0.18 27);
+  --destructive-foreground: oklch(98% 0 0);
+
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(92.98% 0.0351 285.7);
+  --sidebar-primary: oklch(35% 0.25 265);
+  --sidebar-primary-foreground: oklch(92.98% 0.0351 285.7);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(92.98% 0.0351 285.7);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 ```
 
----
-
-### **How to Use the Library**
-
-1. **Install Required Dependencies (if not installed):**
-   ```sh
-   npm install axios form-data imagetracerjs
-   ```
-
-2. **Using the Functions in Another File**
-   ```typescript
-   import { generateImage, generateImageWithStyle, editImageWithMask, convertImageToSVG } from './imageUtils';
-
-   // Generate an image
-   generateImage("Lighthouse on a cliff overlooking the ocean", "./lighthouse.jpeg");
-
-   // Generate an image using another one as a style reference
-   generateImageWithStyle("./cinematic-portrait.png", "A majestic portrait of a chicken", "./chicken-portrait.webp");
-
-   // Edit using a mask
-   editImageWithMask("./dog-wearing-vr-goggles.png", "./mask.png", "Dog wearing black glasses", "./dog-wearing-black-glasses.webp");
-
-   // Convert an image to SVG
-   convertImageToSVG("./input-image.png", "./output-image.svg");
-   ```
----
-
-### **Improvements Made**
-✔ **Modular Functions** → Now each function can be used independently.  
-✔ **Error Handling** → Functions will throw errors if something goes wrong.  
-✔ **Logging** → Each function logs when a file is successfully saved.  
-✔ **Configurable Parameters** → Output paths, file formats, and models are now customizable.  
-✔ **Image to SVG Conversion** → Standalone function added to process bitmap images into an SVG format.
-
-Now, this is a fully functional image processing library! 🚀 Let me know if you need any modifications! 😊
-# PROMPT 1dd59375-c613-4063-95a2-b7373c1a91d1
-
-
-I now want you to edit the App.tsx file so that you can generate an initial image and then use that one as a style for it so that you can generate other images using that as a style.
-
-
-# OUTPUT 1dd59375-c613-4063-95a2-b7373c1a91d1
-Alright! Below is the updated `App.tsx` file that allows users to:  
-
-1. **Generate an initial image from a text prompt.**  
-2. **Use the generated image as a style reference to create new images.**  
-
----
-
-### **Updated `App.tsx`**
-```tsx
-import { useState } from 'react';
-import './App.css';
-import { Button } from '@/components/ui/button';
-import { generateImage, generateImageWithStyle } from './imageUtils';
-
-function App() {
-  const [initialImagePath, setInitialImagePath] = useState<string | null>(null);
-  const [styledImagePath, setStyledImagePath] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState<string>('');
-  const [stylePrompt, setStylePrompt] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // Function to generate the first image
-  const handleGenerateInitialImage = async () => {
-    if (!prompt) {
-      alert('Please enter a prompt for the initial image.');
-      return;
-    }
-
-    setLoading(true);
-    const outputPath = './initial_image.jpeg';
-
-    try {
-      await generateImage(prompt, outputPath);
-      setInitialImagePath(outputPath);
-    } catch (error) {
-      console.error('Error generating initial image:', error);
-      alert('Failed to generate the initial image.');
-    }
-
-    setLoading(false);
-  };
-
-  // Function to generate a styled image using the initial image
-  const handleGenerateStyledImage = async () => {
-    if (!initialImagePath) {
-      alert('Please generate an initial image first.');
-      return;
-    }
-    if (!stylePrompt) {
-      alert('Please enter a prompt for the styled image.');
-      return;
-    }
-
-    setLoading(true);
-    const outputPath = './styled_image.webp';
-
-    try {
-      await generateImageWithStyle(initialImagePath, stylePrompt, outputPath);
-      setStyledImagePath(outputPath);
-    } catch (error) {
-      console.error('Error generating styled image:', error);
-      alert('Failed to generate the styled image.');
-    }
-
-    setLoading(false);
-  };
-
-  return (
-    <div className="App">
-      <h1>Image Generation and Style Transfer</h1>
-
-      {/* Create Initial Image */}
-      <div>
-        <input
-          type="text"
-          placeholder="Enter prompt for initial image"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
-        <Button onClick={handleGenerateInitialImage} disabled={loading}>
-          {loading ? 'Generating...' : 'Generate Initial Image'}
-        </Button>
-        {initialImagePath && (
-          <div>
-            <p>Initial Image:</p>
-            <img src={initialImagePath} alt="Initial" width="300px" />
-          </div>
-        )}
-      </div>
-
-      {/* Generate Image Using Style */}
-      {initialImagePath && (
-        <div style={{ marginTop: '20px' }}>
-          <input
-            type="text"
-            placeholder="Enter prompt for styled image"
-            value={stylePrompt}
-            onChange={(e) => setStylePrompt(e.target.value)}
-          />
-          <Button onClick={handleGenerateStyledImage} disabled={loading}>
-            {loading ? 'Generating...' : 'Generate Styled Image'}
-          </Button>
-          {styledImagePath && (
-            <div>
-              <p>Styled Image:</p>
-              <img src={styledImagePath} alt="Styled" width="300px" />
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default App;
-```
-
----
-
-### **How It Works**
-1. **User enters a prompt** and clicks `Generate Initial Image` to create an initial image.  
-2. The image is displayed once created (saved as `initial_image.jpeg`).  
-3. Once the initial image is generated, a new input field appears for the user to enter a **style prompt**.  
-4. Clicking `Generate Styled Image` creates another image using the initial image as a style reference.  
-5. The new styled image is displayed as `styled_image.webp`.  
-
----
-
-### **Features and Improvements**
-✔ Stateful management of image paths (`useState`).  
-✔ Prevent generating a styled image before the initial one is created.  
-✔ Proper loading state handling to avoid multiple executions.  
-✔ User-friendly UI flow for image generation.  
-
-This setup allows creative use of generated images as style references to create new variations! 🚀 Hope this helps. Let me know if you need additional improvements! 😊
-# PROMPT bb98e6fd-d0ee-4786-9f76-d0f695cc85fe
-
-
-I now want you to rewrite App.tsx but use tailwindcss to style the components
-
-# OUTPUT bb98e6fd-d0ee-4786-9f76-d0f695cc85fe
-Absolutely! Below is the **rewritten `App.tsx`** that incorporates **TailwindCSS** for styling while maintaining the same core functionality:
-
----
-
-### **Updated `App.tsx` with TailwindCSS**
-```tsx
-import { useState } from 'react';
-import { generateImage, generateImageWithStyle } from './imageUtils';
-
-function App() {
-  const [initialImagePath, setInitialImagePath] = useState<string | null>(null);
-  const [styledImagePath, setStyledImagePath] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState<string>('');
-  const [stylePrompt, setStylePrompt] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // Function to generate the first image
-  const handleGenerateInitialImage = async () => {
-    if (!prompt) {
-      alert('Please enter a prompt for the initial image.');
-      return;
-    }
-
-    setLoading(true);
-    const outputPath = './initial_image.jpeg';
-
-    try {
-      await generateImage(prompt, outputPath);
-      setInitialImagePath(outputPath);
-    } catch (error) {
-      console.error('Error generating initial image:', error);
-      alert('Failed to generate the initial image.');
-    }
-
-    setLoading(false);
-  };
-
-  // Function to generate a styled image using the initial image
-  const handleGenerateStyledImage = async () => {
-    if (!initialImagePath) {
-      alert('Please generate an initial image first.');
-      return;
-    }
-    if (!stylePrompt) {
-      alert('Please enter a prompt for the styled image.');
-      return;
-    }
-
-    setLoading(true);
-    const outputPath = './styled_image.webp';
-
-    try {
-      await generateImageWithStyle(initialImagePath, stylePrompt, outputPath);
-      setStyledImagePath(outputPath);
-    } catch (error) {
-      console.error('Error generating styled image:', error);
-      alert('Failed to generate the styled image.');
-    }
-
-    setLoading(false);
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl font-bold text-blue-400 mb-8 text-center">
-        Image Generation & Style Transfer
-      </h1>
-
-      {/* Generate Initial Image */}
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Generate Initial Image</h2>
-        <input
-          type="text"
-          placeholder="Enter prompt for initial image"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="w-full p-2 mb-4 bg-gray-700 text-white rounded-lg outline-none border border-gray-600 focus:border-blue-400"
-        />
-        <button
-          onClick={handleGenerateInitialImage}
-          disabled={loading}
-          className={`w-full py-2 text-lg font-semibold rounded-lg transition ${
-            loading
-              ? 'bg-gray-600 cursor-not-allowed'
-              : 'bg-blue-500 hover:bg-blue-600'
-          }`}
-        >
-          {loading ? 'Generating...' : 'Generate Initial Image'}
-        </button>
-
-        {initialImagePath && (
-          <div className="mt-4">
-            <p className="text-center mb-2">Initial Image:</p>
-            <img
-              src={initialImagePath}
-              alt="Initial"
-              className="w-full rounded-lg border border-gray-600"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Generate Image Using Style */}
-      {initialImagePath && (
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md mt-6">
-          <h2 className="text-xl font-semibold mb-4">Generate Styled Image</h2>
-          <input
-            type="text"
-            placeholder="Enter prompt for styled image"
-            value={stylePrompt}
-            onChange={(e) => setStylePrompt(e.target.value)}
-            className="w-full p-2 mb-4 bg-gray-700 text-white rounded-lg outline-none border border-gray-600 focus:border-blue-400"
-          />
-          <button
-            onClick={handleGenerateStyledImage}
-            disabled={loading}
-            className={`w-full py-2 text-lg font-semibold rounded-lg transition ${
-              loading
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-purple-500 hover:bg-purple-600'
-            }`}
-          >
-            {loading ? 'Generating...' : 'Generate Styled Image'}
-          </button>
-
-          {styledImagePath && (
-            <div className="mt-4">
-              <p className="text-center mb-2">Styled Image:</p>
-              <img
-                src={styledImagePath}
-                alt="Styled"
-                className="w-full rounded-lg border border-gray-600"
-              />
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default App;
-```
-
----
-
-### **What’s Improved?**
-✔ **TailwindCSS Styling** → Modern **dark mode**-styled UI using TailwindCSS classes.  
-✔ **Mobile Responsive** → Centers the content and ensures responsiveness.  
-✔ **Clean & Professional UI** → Styled inputs, buttons, and image previews.  
-✔ **Interactive Button UX** → Disabled styles added when loading for feedback.  
-
----
-
-### **How to Set Up TailwindCSS (if not installed)**
-1. **Install TailwindCSS**  
-   ```sh
-   npm install -D tailwindcss postcss autoprefixer
-   ```
-2. **Initialize Tailwind**  
-   ```sh
-   npx tailwindcss init -p
-   ```
-3. **Configure Tailwind (Edit `tailwind.config.js`)**  
-   ```js
-   module.exports = {
-     content: ["./src/**/*.{js,ts,jsx,tsx}"],
-     theme: {
-       extend: {},
-     },
-     plugins: [],
-   };
-   ```
-4. **Import Tailwind in `index.css`**  
-   ```css
-   @tailwind base;
-   @tailwind components;
-   @tailwind utilities;
-   ```
-
----
-
-### **Final Look with TailwindCSS**
-- **Dark mode UI**
-- **Beautiful buttons & inputs**
-- **Neatly styled image previews**
-- **Modern, mobile-friendly design**
-
-🚀 **Now the app looks & feels much better!** Let me know if you need additional tweaks! 😊
-# PROMPT eec5e12d-2176-4fb7-bf46-eff2cda34e6d
-
-
-The tailwind styling doesn't take advantage of the full width of the screen, edit what you must to allow for this.
-
-# OUTPUT eec5e12d-2176-4fb7-bf46-eff2cda34e6d
-Great request! Below is the improved **`App.tsx`** ensuring that TailwindCSS fully utilizes the **available screen width** while maintaining a structured layout.
-
-### **Key Improvements**
-✔ **Flexbox & Grid Layouts** → Use `flex` and `grid` to center elements properly.  
-✔ **Full-Width Components** → Inputs, buttons, and containers span across the screen.  
-✔ **Responsive Design** → Works seamlessly on **mobile & large screens**.  
-
----
-
-### **Updated `App.tsx` with Full-Width TailwindCSS Styling**
-```tsx
-import { useState } from 'react';
-import { generateImage, generateImageWithStyle } from './imageUtils';
-
-function App() {
-  const [initialImagePath, setInitialImagePath] = useState<string | null>(null);
-  const [styledImagePath, setStyledImagePath] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState<string>('');
-  const [stylePrompt, setStylePrompt] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // Function to generate the first image
-  const handleGenerateInitialImage = async () => {
-    if (!prompt) {
-      alert('Please enter a prompt for the initial image.');
-      return;
-    }
-
-    setLoading(true);
-    const outputPath = './initial_image.jpeg';
-
-    try {
-      await generateImage(prompt, outputPath);
-      setInitialImagePath(outputPath);
-    } catch (error) {
-      console.error('Error generating initial image:', error);
-      alert('Failed to generate the initial image.');
-    }
-
-    setLoading(false);
-  };
-
-  // Function to generate a styled image using the initial image
-  const handleGenerateStyledImage = async () => {
-    if (!initialImagePath) {
-      alert('Please generate an initial image first.');
-      return;
-    }
-    if (!stylePrompt) {
-      alert('Please enter a prompt for the styled image.');
-      return;
-    }
-
-    setLoading(true);
-    const outputPath = './styled_image.webp';
-
-    try {
-      await generateImageWithStyle(initialImagePath, stylePrompt, outputPath);
-      setStyledImagePath(outputPath);
-    } catch (error) {
-      console.error('Error generating styled image:', error);
-      alert('Failed to generate the styled image.');
-    }
-
-    setLoading(false);
-  };
-
-  return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-900 text-white">
-      <div className="w-full max-w-6xl px-6">
-        <h1 className="text-4xl font-bold text-blue-400 mb-8 text-center">
-          Image Generation & Style Transfer
-        </h1>
-
-        {/* Generate Initial Image */}
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full">
-          <h2 className="text-xl font-semibold mb-4">Generate Initial Image</h2>
-          <input
-            type="text"
-            placeholder="Enter prompt for initial image"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="w-full p-3 mb-4 bg-gray-700 text-white rounded-lg border border-gray-600 outline-none focus:border-blue-400"
-          />
-          <button
-            onClick={handleGenerateInitialImage}
-            disabled={loading}
-            className={`w-full py-3 text-lg font-semibold rounded-lg transition ${
-              loading
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600'
-            }`}
-          >
-            {loading ? 'Generating...' : 'Generate Initial Image'}
-          </button>
-
-          {initialImagePath && (
-            <div className="mt-6 flex flex-col items-center">
-              <p className="text-center mb-2">Initial Image:</p>
-              <img
-                src={initialImagePath}
-                alt="Initial"
-                className="w-full max-h-96 object-contain rounded-lg border border-gray-600"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Generate Image Using Style */}
-        {initialImagePath && (
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full mt-6">
-            <h2 className="text-xl font-semibold mb-4">Generate Styled Image</h2>
-            <input
-              type="text"
-              placeholder="Enter prompt for styled image"
-              value={stylePrompt}
-              onChange={(e) => setStylePrompt(e.target.value)}
-              className="w-full p-3 mb-4 bg-gray-700 text-white rounded-lg border border-gray-600 outline-none focus:border-blue-400"
-            />
-            <button
-              onClick={handleGenerateStyledImage}
-              disabled={loading}
-              className={`w-full py-3 text-lg font-semibold rounded-lg transition ${
-                loading
-                  ? 'bg-gray-600 cursor-not-allowed'
-                  : 'bg-purple-500 hover:bg-purple-600'
-              }`}
-            >
-              {loading ? 'Generating...' : 'Generate Styled Image'}
-            </button>
-
-            {styledImagePath && (
-              <div className="mt-6 flex flex-col items-center">
-                <p className="text-center mb-2">Styled Image:</p>
-                <img
-                  src={styledImagePath}
-                  alt="Styled"
-                  className="w-full max-h-96 object-contain rounded-lg border border-gray-600"
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export default App;
-```
-
----
-
-### **What’s Changed?**
-🚀 Fully **responsive** → Uses **`max-w-6xl`** and **`px-6`** for proper spacing.  
-📱 Improved **mobile support** → Images and prompts stretch across the screen.  
-🌆 **Maximized image preview** → `max-h-96 object-contain` ensures images fit.  
-🎨 **Larger UI elements** → **Bigger text, buttons, and inputs** for better usability. 
-
----
-
-### ✅ **Final UI Look**
-☑ **Full-width layout** across large screens.  
-☑ **Centered UI** with max-size constraints for readability.  
-☑ **Stylish modern inputs & buttons** with clear feedback.  
-☑ **Flexible design** that **adapts to mobile & desktop** seamlessly.  
-
-💡 *Now, your app will use up the full width of the screen properly!* 🚀  
-Let me know if you need additional tweaks! 😊
+### **Explanation of Edits:**
+- **Primary colors adjusted** to use **Deep Blue, Vibrant Blue, and Soft Blue**.
+- **Foreground and Secondary foreground** optimized for readability.
+- **Border and input colors** chosen to match the aesthetic while keeping contrast.
+- **Dark mode adjustments** match the light theme while staying readable.
+- **Neutral and contrast-friendly chart colors** fitting the theme.
+
+This setup ensures that your theme has a **modern, readable, and accessibility-friendly** look while keeping it aesthetically pleasing with deep blues. 🚀
 
 # ASK MODEL BELLOW
+
+I want you to fix the Navbar so that when you hover and 
