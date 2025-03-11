@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { handleLogin, handleSignup, handleGoogleLogin } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -12,48 +12,40 @@ export default function Signup() {
   const [error, setError] = useState<string | null>(null);
 
   // Handle user login
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    
     const target = e.target as typeof e.target & {
       email: { value: string };
       password: { value: string };
     };
-    const { email, password } = target;
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.value,
-      password: password.value,
-    });
-
-    if (error) setError(error.message);
-    else navigate("/dashboard");
+    
+    try {
+      await handleLogin(target.email.value, target.password.value);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    }
   };
 
   // Handle user signup
-  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+
     const target = e.target as typeof e.target & {
       name: { value: string };
       email: { value: string };
       password: { value: string };
     };
-    const { name, email, password } = target;
 
-    const { error } = await supabase.auth.signUp({
-      email: email.value,
-      password: password.value,
-    });
-
-    if (error) setError(error.message);
-    else navigate("/dashboard");
-  };
-
-  // Handle Google OAuth Login
-  const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
-    if (error) setError(error.message);
+    try {
+      await handleSignup(target.name.value, target.email.value, target.password.value);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    }
   };
 
   return (
@@ -70,7 +62,7 @@ export default function Signup() {
 
                 {/* LOGIN FORM */}
                 <TabsContent value="login">
-                  <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-5">
+                  <form onSubmit={onLogin} className="flex flex-col gap-4 mt-5">
                     <div className="text-center">
                       <h2 className="text-2xl font-semibold text-primary">Welcome back</h2>
                       <p className="text-muted-foreground">Login to your account</p>
@@ -104,7 +96,7 @@ export default function Signup() {
                 
                 {/* SIGN-UP FORM */}
                 <TabsContent value="sign-up">
-                  <form onSubmit={handleSignup} className="flex flex-col gap-4 mt-5">
+                  <form onSubmit={onSignup} className="flex flex-col gap-4 mt-5">
                     <div className="text-center text-primary">
                       <h2 className="text-2xl font-semibold">Create an account</h2>
                       <p className="text-muted-foreground">Sign up for a new account</p>
@@ -114,7 +106,7 @@ export default function Signup() {
 
                     <div className="space-y-3 text-primary">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="name" type="name" placeholder="IconLover" required />
+                      <Input id="name" type="text" placeholder="IconLover" required />
                     </div>
 
                     <div className="space-y-3 text-primary">

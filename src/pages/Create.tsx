@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { generateImage, generateImageWithStyle } from '@/lib/imageUtils';
+import { generateImage, generateImageWithStyle } from '@/lib/image-generation';
 
 export default function Create() {
   const [initialImagePath, setInitialImagePath] = useState<string | null>(null);

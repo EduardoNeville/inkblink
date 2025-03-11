@@ -1,7 +1,7 @@
 // ProtectedRoute.tsx
 import { Navigate } from "react-router-dom"; // Changed from NavLink
 import { useContext, ReactNode } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -22,6 +22,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
       {children}
     </div>
   ) : (
-    <Navigate to="/login" replace />
+    <Navigate to="/signup" replace />
   );
 }
