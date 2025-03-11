@@ -46,7 +46,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="mx-80 my-5 flex items-center justify-between py-2 px-5 bg-muted rounded-full">
+    <nav className="mx-auto my-5 flex items-center justify-between py-2 px-5 bg-muted rounded-full">
       {/* LEFT SIDE - WEBSITE NAME */}
       <Link to="/" className="text-xl font-bold text-primary">
         Ink Blink
@@ -95,7 +95,7 @@ export function Navbar() {
           </DropdownMenu>
         ) : (
           // User is not logged in - Show Signup Button
-          <Button onClick={() => navigate("/signup")}>Sign Up</Button>
+          <Button className="rounded-full" onClick={() => navigate("/signup")}>Sign Up</Button>
         )}
       </div>
     </nav>
