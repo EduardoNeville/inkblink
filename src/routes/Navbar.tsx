@@ -46,9 +46,9 @@ export function Navbar() {
   };
 
   return (
-    <nav className="flex items-center justify-between p-5 bg-white shadow-md shadow-secondary">
+    <nav className="mx-80 my-5 flex items-center justify-between py-2 px-5 bg-muted rounded-full">
       {/* LEFT SIDE - WEBSITE NAME */}
-      <Link to="/" className="text-2xl font-bold text-primary">
+      <Link to="/" className="text-xl font-bold text-primary">
         Ink Blink
       </Link>
 

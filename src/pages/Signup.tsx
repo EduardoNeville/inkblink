@@ -23,7 +23,7 @@ export default function Signup() {
     
     try {
       await handleLogin(target.email.value, target.password.value);
-      navigate("/dashboard");
+      navigate("/create");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -42,11 +42,21 @@ export default function Signup() {
 
     try {
       await handleSignup(target.name.value, target.email.value, target.password.value);
-      navigate("/dashboard");
+      navigate("/create");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
   };
+
+  const onGoogleLogin = async () => {
+    try {
+      await handleGoogleLogin();
+      navigate("/create");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    }
+
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-6 md:p-10">
@@ -88,7 +98,7 @@ export default function Signup() {
                       <span className="bg-background px-2">Or continue with</span>
                     </div>
 
-                    <Button variant="outline" className="w-full text-primary" onClick={handleGoogleLogin}>
+                    <Button variant="outline" className="w-full text-primary" onClick={onGoogleLogin}>
                       Login with Google
                     </Button>
                   </form>
@@ -127,7 +137,7 @@ export default function Signup() {
                       <span className="bg-background px-2">Or sign up with</span>
                     </div>
 
-                    <Button variant="outline" className="w-full text-primary" onClick={handleGoogleLogin}>
+                    <Button variant="outline" className="w-full text-primary" onClick={onGoogleLogin}>
                       Sign Up with Google
                     </Button>
                   </form>
