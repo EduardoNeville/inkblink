@@ -19,7 +19,7 @@ function Accordion({ items }: AccordionProps) {
         <div key={index} className="bg-muted rounded-lg my-2">
           {/* Header button */}
           <button
-            className="p-4 text-primary font-semibold flex justify-between items-center w-full focus:outline-none"
+            className={`${openIndex ? "pt-1" : "py-2"} px-4 text-primary font-bold flex justify-between items-center w-full focus:outline-none`}
             onClick={() => setOpenIndex(openIndex === index ? null : index)}
           >
             <span>{item.header}</span>
@@ -32,7 +32,7 @@ function Accordion({ items }: AccordionProps) {
             }`}
           >
             <div
-              className={`px-4 pb-4 transition-transform duration-300 ease-in-out ${
+              className={`px-4 pb-4 transition-transform duration-300 ease-in-out font-display text-primary/50 ${
                 openIndex === index ? 'translate-y-0' : '-translate-y-full'
               }`}
             >

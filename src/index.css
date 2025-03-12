@@ -131,6 +131,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-display: "Whyte", "normal";
+  --font-bold: "Whyte", "bold";
 }
 
 @layer base {
@@ -141,4 +143,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+@font-face {
+  font-family: Whyte;
+  font-style: otf;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("/fonts/Whyte-Inktrap-Regular.otf") format("otf");
+}
+
+@font-face {
+  font-family: Whyte;
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("/fonts/WhyteInktrap-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Whyte;
+  font-style: bold;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("/fonts/WhyteInktrap-Bold.woff2") format("woff2");
+}
+
 

@@ -68,18 +68,18 @@ export function Navbar() {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
     if (mediaQuery.matches) {
       return (
-        <Button variant="ghost" onClick={toggleExpand}>
+        <Button variant="ghost" onClick={toggleExpand} className="text-primary">
         {isExpanded ? <X /> : <Menu />}
         </Button>
       );
     } else {
       return (
-        <div className="flex items-center">
+        <div className="flex items-center ">
           {/* Custom Navigation Menu for Pricing (only on medium and larger screens) */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             <Link 
               to="/pricing" 
-              className="text-xs font-bold text-primary hover:text-primary transition-colors"
+              className="text-sm text-primary hover:text-primary transition-colors font-display pt-1"
             >
               Pricing
             </Link>
@@ -103,7 +103,7 @@ export function Navbar() {
     >
       {/* Main bar content */}
       <div className="flex items-center justify-between w-full gap-30 sm:gap-40">
-        <Link to="/" className="text-base sm:text-xs font-bold text-primary">
+        <Link to="/" className="text-base sm:text-base font-bold text-primary pt-1">
           InkBlink
         </Link>
 
@@ -119,14 +119,14 @@ export function Navbar() {
         <div className="flex flex-col items-start">
           <Link
             to="/pricing"
-            className="text-base font-semibold text-primary hover:text-accent hover:underline transition-colors"
+            className="text-sm font-bold text-primary hover:text-accent hover:underline transition-colors"
             onClick={() => setIsExpanded(false)}
           >
             Pricing
           </Link>
           <Link
             to="/create"
-            className="text-base font-semibold text-primary hover:text-accent transition-colors"
+            className="text-sm font-bold text-primary hover:text-accent transition-colors"
             onClick={() => setIsExpanded(false)}
           >
             Create

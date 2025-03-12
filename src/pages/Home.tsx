@@ -55,10 +55,10 @@ function LandingSection() {
           ))}
         </div>
         {/* Header content */}
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-foreground tracking-tight">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-primary/50 tracking-tight">
           Craft Icon Packs with <span className="text-primary">InkBlink</span>
         </h1>
-        <p className="my-4 text-base sm:text-lg text-muted-foreground">
+        <p className="my-4 text-base sm:text-lg text-muted-foreground font-display">
           Generate, style, and edit cohesive icon sets using InkBucks. Your creativity, our tools.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-3">
@@ -160,7 +160,7 @@ const GridSection = () => {
   return (
     <section className="py-8 sm:py-16 mx-auto bg-primary rounded-lg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl sm:text-4xl font-semibold text-center text-white mb-12">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12">
           Explore Icon Packs
         </h2>
         <div className="relative">
@@ -181,10 +181,10 @@ const GridSection = () => {
                         [Placeholder: Sample {style} icon pack preview]
                       </span>
                     </div>
-                    <h3 className="text-base font-medium text-card-foreground">
+                    <h3 className="text-base font-bold text-card-foreground text-primary">
                       {style} Icons
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm text-primary/50 font-display">
                       Starting at 50 InkBucks
                     </p>
                     <Button
@@ -252,8 +252,8 @@ const AngledImageTextSection = () => (
   <section className="py-8 sm:py-16 bg-gradient-to-br from-primary to-secondary text-primary-foreground relative rounded-lg overflow-hidden">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="relative z-10 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6">Style Your Way</h2>
-        <p className="text-base sm:text-lg max-w-2xl mx-auto">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4">Style Your Way</h2>
+        <p className="text-base sm:text-lg font-display max-w-2xl mx-auto">
           Use InkBucks to tweak colors, sizes, and effects. Make every icon pack uniquely yours.
         </p>
       </div>

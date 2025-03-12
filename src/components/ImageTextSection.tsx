@@ -28,8 +28,8 @@ export const ImageTextSection = ({
           <span className="text-muted-foreground">[Placeholder: {imageDescription}]</span>
         </div>
         <div className="flex-1">
-          <h2 className="text-3xl text-primary font-semibold text-foreground mb-4">{title}</h2>
-          <p className="text-lg text-muted-foreground">{description}</p>
+          <h2 className="text-3xl text-primary font-bold text-foreground mb-2">{title}</h2>
+          <p className="text-lg text-primary/50 font-display">{description}</p>
           <Button variant="outline" className="mt-4 text-primary p-0 rounded-full bg-white text-primary hover:bg-accent hover:text-white border-primary border-1">
             Learn More <ArrowRight className="ml-2 h-4 w-4" />
           </Button>

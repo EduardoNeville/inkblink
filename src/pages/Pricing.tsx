@@ -35,7 +35,7 @@ export function PricingCard({ plan }: PricingCardProps) {
         </div>
       )}
       <h2
-        className={`text-m font-semibold mb-2 ${
+        className={`text-m font-bold mb-2 ${
           isSubscription ? 'text-white' : 'text-primary/70'
         }`}
       >
@@ -51,13 +51,14 @@ export function PricingCard({ plan }: PricingCardProps) {
               {included ? '✓' : '✗'}
             </span>
             <span
-              className={
+              className={`font-display ${
+
                 isSubscription
-                  ? 'text-white font-medium'
+                  ? 'text-white '
                   : included
-                  ? 'text-primary/70 font-medium'
+                  ? 'text-primary/70 font-display'
                   : 'text-primary/40 line-through decoration-1 decoration-primary'
-              }
+              }`}
             >
               {feature}
             </span>
