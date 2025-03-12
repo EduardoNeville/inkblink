@@ -57,11 +57,6 @@ export function Navbar() {
         <NavigationMenuList className="hidden md:flex gap-6">
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link to="/features" className="hover:underline">Features</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild>
               <Link to="/pricing" className="hover:text-primary">Pricing</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
