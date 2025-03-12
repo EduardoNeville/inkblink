@@ -104,7 +104,7 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-1/2 -translate-x-1/2 z-50 bg-primary/30 backdrop-blur-xl rounded-3xl py-2 px-4 mt-5 transition-transform duration-300 ${
+      className={`fixed top-0 left-1/2 -translate-x-1/2 z-50 bg-primary/30 backdrop-blur-3xl rounded-3xl py-2 px-4 mt-5 transition-transform duration-300 ${
         isVisible ? "translate-y-0" : "-translate-y-30"
       }`}
     >
