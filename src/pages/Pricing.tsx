@@ -221,7 +221,7 @@ function FAQSection() {
 
 export default function Pricing() {
   return (
-    <div className="flex flex-col container mx-auto px-4 sm:py-16 gap-4 sm:gap-16">
+    <div className="flex flex-col container mx-auto px-4 sm:py-16 gap-4 sm:gap-16 mt-30">
       <h1 className="text-primary text-4xl font-bold text-center mb-8 sm:mb-32">
         Pricing
       </h1>
