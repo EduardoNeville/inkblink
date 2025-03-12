@@ -83,9 +83,16 @@ export function Navbar() {
             >
               Pricing
             </Link>
-            <Button className="text-xs bg-primary text-white hover:bg-accent transition-all 
-              duration-300 rounded-full border-primary border-1"
+            <Link 
+              to="/signup" 
+              className="text-sm text-primary hover:text-primary transition-colors font-display pt-1"
+            >
+              Login
+            </Link>
+            <Button 
+              className="text-xs bg-primary text-white hover:bg-accent transition-all duration-300 rounded-full border-primary border-1"
               onClick={() => navigate("/signup")}
+              size="sm"
             >
               Join for free
             </Button>
@@ -123,6 +130,13 @@ export function Navbar() {
             onClick={() => setIsExpanded(false)}
           >
             Pricing
+          </Link>
+          <Link
+            to="/signup"
+            className="text-sm font-bold text-primary hover:text-accent hover:underline transition-colors"
+            onClick={() => setIsExpanded(false)}
+          >
+            Login
           </Link>
           <Link
             to="/create"

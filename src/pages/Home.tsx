@@ -67,13 +67,13 @@ function LandingSection() {
             size="lg"
             variant="outline"
           >
-            Join for free <ArrowRight className="ml-2 h-5 w-5" />
+            Join for free <ArrowRight className="ml-2 h-5 w-5 bg-muted rounded-full" />
           </Button>
           <Button
             className="w-full sm:w-auto bg-primary text-white hover:bg-accent transition-all duration-300 rounded-full border-primary border-1"
             size="lg"
           >
-            See our plans <ArrowRight className="ml-2 h-5 w-5" />
+            See our plans <ArrowRight className="ml-2 h-5 w-5 bg-muted rounded-full text-primary" />
           </Button>
         </div>
       </div>

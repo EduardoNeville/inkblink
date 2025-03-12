@@ -59,7 +59,7 @@ export default function Signup() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6 md:p-10 mt-10">
+    <div className="flex min-h-screen items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-3xl">
         <Card className="overflow-hidden p-0">
           <CardContent className="grid md:grid-cols-2">
@@ -75,17 +75,17 @@ export default function Signup() {
                   <form onSubmit={onLogin} className="flex flex-col gap-4 mt-5">
                     <div className="text-center">
                       <h2 className="text-2xl font-bold text-primary">Welcome back</h2>
-                      <p className="text-muted-foreground font-display text-primary/50">Login to your account</p>
+                      <p className="text-muted-foreground">Login to your account</p>
                     </div>
 
                     {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                    <div className="space-y-3 text-primary font-display">
+                    <div className="space-y-3 text-primary">
                       <Label htmlFor="email">Email</Label>
                       <Input id="email" type="email" placeholder="m@example.com" required />
                     </div>
 
-                    <div className="space-y-3 text-primary font-display">
+                    <div className="space-y-3 text-primary">
                       <Label htmlFor="password">Password</Label>
                       <Input id="password" type="password" required />
                     </div>
@@ -94,7 +94,7 @@ export default function Signup() {
                       Login
                     </Button>
 
-                    <div className="relative text-sm text-center text-primary/50 font-display pt-1">
+                    <div className="relative text-sm text-center text-primary">
                       <span className="bg-background px-2">Or continue with</span>
                     </div>
 
@@ -108,23 +108,23 @@ export default function Signup() {
                 <TabsContent value="sign-up">
                   <form onSubmit={onSignup} className="flex flex-col gap-4 mt-5">
                     <div className="text-center text-primary">
-                      <h2 className="text-2xl font-bold">Create an account</h2>
-                      <p className="text-muted-foreground font-display text-primary/50">Sign up for a new account</p>
+                      <h2 className="text-2xl font-semibold">Create an account</h2>
+                      <p className="text-muted-foreground">Sign up for a new account</p>
                     </div>
 
                     {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                    <div className="space-y-3 text-primary font-display">
+                    <div className="space-y-3 text-primary">
                       <Label htmlFor="name">Name</Label>
                       <Input id="name" type="text" placeholder="IconLover" required />
                     </div>
 
-                    <div className="space-y-3 text-primary font-display">
+                    <div className="space-y-3 text-primary">
                       <Label htmlFor="email">Email</Label>
                       <Input id="email" type="email" placeholder="m@example.com" required />
                     </div>
 
-                    <div className="space-y-3 text-primary font-display">
+                    <div className="space-y-3 text-primary">
                       <Label htmlFor="password">Password</Label>
                       <Input id="password" type="password" required />
                     </div>
@@ -133,7 +133,7 @@ export default function Signup() {
                       Sign Up
                     </Button>
 
-                    <div className="relative text-sm text-center text-primary/50 font-display pt-1">
+                    <div className="relative text-sm text-center text-primary">
                       <span className="bg-background px-2">Or sign up with</span>
                     </div>
 
