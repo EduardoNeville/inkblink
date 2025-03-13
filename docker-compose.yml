@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./inkblink
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./inkblink:/app
+      - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
