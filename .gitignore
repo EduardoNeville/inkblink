@@ -13,6 +13,7 @@ dist
 dist-ssr
 *.local
 misc
+target
 
 # Editor directories and files
 .vscode/*
