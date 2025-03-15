@@ -1,5 +1,7 @@
+// create-page.tsx
 import { useState } from 'react';
 import { generateImage, generateImageWithStyle } from '@/lib/image-generation';
+import { Button } from '@/components/ui/button';
 
 export default function Create() {
   const [initialImagePath, setInitialImagePath] = useState<string | null>(null);
@@ -55,83 +57,93 @@ export default function Create() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-900 text-white">
-      <div className="w-full max-w-6xl px-6">
-        <h1 className="text-4xl font-bold text-blue-400 mb-8 text-center">
-          Image Generation & Style Transfer
-        </h1>
+    <div className="flex flex-col container mx-auto px-4 py-16 gap-16 mt-30">
+      <h1 className="text-primary text-4xl font-bold text-center mb-8">
+        Create Your Images
+      </h1>
 
-        {/* Generate Initial Image */}
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full">
-          <h2 className="text-xl font-semibold mb-4">Generate Initial Image</h2>
+      {/* Generate Initial Image Section */}
+      <div className="border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow bg-muted text-primary">
+        <h2 className="text-xl font-bold mb-4 text-primary/70 text-center">
+          Generate Initial Image
+        </h2>
+        <p className="text-center font-display mb-6 text-primary/50">
+          Create your base image (1 IB per generation)
+        </p>
+        <input
+          type="text"
+          placeholder="Enter prompt for initial image"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          className="w-full p-3 mb-6 bg-white text-primary rounded-lg border border-primary/20 outline-none focus:border-primary"
+        />
+        <Button
+          variant="outline"
+          onClick={handleGenerateInitialImage}
+          disabled={loading}
+          className={`w-full rounded-full border-primary border-1 hover:border-1 bg-primary text-white hover:bg-accent hover:text-white ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          {loading ? 'Generating...' : 'Generate Initial Image'}
+        </Button>
+
+        {initialImagePath && (
+          <div className="mt-6 flex flex-col items-center">
+            <p className="text-center mb-2 text-primary/70">Initial Image:</p>
+            <img
+              src={initialImagePath}
+              alt="Initial"
+              className="w-full max-h-96 object-contain rounded-lg border border-primary/20"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Generate Styled Image Section */}
+      {initialImagePath && (
+        <div className="border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow bg-primary text-white">
+          <div className="mb-2 flex justify-center">
+            <span className="bg-accent text-white text-xs font-bold px-2 py-1 rounded-full">
+              Next Step
+            </span>
+          </div>
+          <h2 className="text-xl font-bold mb-4 text-center">
+            Generate Styled Image
+          </h2>
+          <p className="text-center font-display mb-6">
+            Apply a style to your image (1 IB per styling)
+          </p>
           <input
             type="text"
-            placeholder="Enter prompt for initial image"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="w-full p-3 mb-4 bg-gray-700 text-white rounded-lg border border-gray-600 outline-none focus:border-blue-400"
+            placeholder="Enter prompt for styled image"
+            value={stylePrompt}
+            onChange={(e) => setStylePrompt(e.target.value)}
+            className="w-full p-3 mb-6 bg-white text-primary rounded-lg border border-primary/20 outline-none focus:border-accent"
           />
-          <button
-            onClick={handleGenerateInitialImage}
+          <Button
+            variant="outline"
+            onClick={handleGenerateStyledImage}
             disabled={loading}
-            className={`w-full py-3 text-lg font-semibold rounded-lg transition ${
-              loading
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600'
+            className={`w-full rounded-full border-primary border-1 hover:border-1 bg-white text-primary hover:bg-accent hover:text-white ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
-            {loading ? 'Generating...' : 'Generate Initial Image'}
-          </button>
+            {loading ? 'Generating...' : 'Generate Styled Image'}
+          </Button>
 
-          {initialImagePath && (
+          {styledImagePath && (
             <div className="mt-6 flex flex-col items-center">
-              <p className="text-center mb-2">Initial Image:</p>
+              <p className="text-center mb-2">Styled Image:</p>
               <img
-                src={initialImagePath}
-                alt="Initial"
-                className="w-full max-h-96 object-contain rounded-lg border border-gray-600"
+                src={styledImagePath}
+                alt="Styled"
+                className="w-full max-h-96 object-contain rounded-lg border border-white/20"
               />
             </div>
           )}
         </div>
-
-        {/* Generate Image Using Style */}
-        {initialImagePath && (
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full mt-6">
-            <h2 className="text-xl font-semibold mb-4">Generate Styled Image</h2>
-            <input
-              type="text"
-              placeholder="Enter prompt for styled image"
-              value={stylePrompt}
-              onChange={(e) => setStylePrompt(e.target.value)}
-              className="w-full p-3 mb-4 bg-gray-700 text-white rounded-lg border border-gray-600 outline-none focus:border-blue-400"
-            />
-            <button
-              onClick={handleGenerateStyledImage}
-              disabled={loading}
-              className={`w-full py-3 text-lg font-semibold rounded-lg transition ${
-                loading
-                  ? 'bg-gray-600 cursor-not-allowed'
-                  : 'bg-purple-500 hover:bg-purple-600'
-              }`}
-            >
-              {loading ? 'Generating...' : 'Generate Styled Image'}
-            </button>
-
-            {styledImagePath && (
-              <div className="mt-6 flex flex-col items-center">
-                <p className="text-center mb-2">Styled Image:</p>
-                <img
-                  src={styledImagePath}
-                  alt="Styled"
-                  className="w-full max-h-96 object-contain rounded-lg border border-gray-600"
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
-

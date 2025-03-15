@@ -26,14 +26,7 @@ export default function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/features" element={<Features />} />
             <Route path="/payment" element={<PaymentForm />} />
-            <Route 
-              path="/create" 
-              element={
-                <ProtectedRoute>
-                  <Create />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/create" element={<Create />} />
             <Route 
               path="/dashboard" 
               element={

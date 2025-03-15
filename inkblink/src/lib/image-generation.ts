@@ -41,9 +41,11 @@ export async function generateImage(prompt: string, outputPath: string, model: s
   );
 
   if (response.status === 200) {
+    console.log("Response: ", response.data)
     fs.writeFileSync(outputPath, Buffer.from(response.data));
     console.log(`Image saved to ${outputPath}`);
   } else {
+    console.log("unable to write into a file")
     throw new Error(`${response.status}: ${response.data.toString()}`);
   }
 }

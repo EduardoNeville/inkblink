@@ -84,6 +84,12 @@ export function Navbar() {
               Pricing
             </Link>
             <Link 
+              to="/create" 
+              className="text-sm text-primary hover:text-primary transition-colors font-display pt-1"
+            >
+              Create
+            </Link>
+            <Link 
               to="/signup" 
               className="text-sm text-primary hover:text-primary transition-colors font-display pt-1"
             >
