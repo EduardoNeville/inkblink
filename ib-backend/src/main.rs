@@ -1,10 +1,12 @@
-use actix_web::{web, App, HttpServer, HttpResponse};
+use actix_web::{web, App, HttpServer};
 use actix_cors::Cors;
 use sqlx::postgres::PgPoolOptions;
 
+mod models;
+mod handlers;
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Create database pool
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect("postgres://myuser:mypassword@localhost:5432/mydb")
@@ -27,6 +29,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .service(
                 web::scope("/api")
+                    // Users
                     .service(
                         web::resource("/users")
                             .route(web::post().to(handlers::create_user))
@@ -37,49 +40,46 @@ async fn main() -> std::io::Result<()> {
                             .route(web::get().to(handlers::get_user))
                             .route(web::put().to(handlers::update_user))
                             .route(web::delete().to(handlers::delete_user)),
+                    )
+                    // Icon Packs
+                    .service(
+                        web::resource("/icon_packs")
+                            .route(web::post().to(handlers::create_icon_pack))
+                            .route(web::get().to(handlers::list_icon_packs)),
+                    )
+                    .service(
+                        web::resource("/icon_packs/{id}")
+                            .route(web::get().to(handlers::get_icon_pack))
+                            .route(web::put().to(handlers::update_icon_pack))
+                            .route(web::delete().to(handlers::delete_icon_pack)),
+                    )
+                    // Icons
+                    .service(
+                        web::resource("/icons")
+                            .route(web::post().to(handlers::create_icon))
+                            .route(web::get().to(handlers::list_icons)),
+                    )
+                    .service(
+                        web::resource("/icons/{id}")
+                            .route(web::get().to(handlers::get_icon))
+                            .route(web::put().to(handlers::update_icon))
+                            .route(web::delete().to(handlers::delete_icon)),
+                    )
+                    // Transactions
+                    .service(
+                        web::resource("/transactions")
+                            .route(web::post().to(handlers::create_transaction))
+                            .route(web::get().to(handlers::list_transactions)),
+                    )
+                    .service(
+                        web::resource("/transactions/{id}")
+                            .route(web::get().to(handlers::get_transaction))
+                            .route(web::put().to(handlers::update_transaction))
+                            .route(web::delete().to(handlers::delete_transaction)),
                     ),
             )
     })
     .bind(("0.0.0.0", 8080))?
     .run()
     .await
-}
-
-mod handlers {
-    use actix_web::{web, HttpResponse};
-    use sqlx::PgPool;
-    
-    pub async fn create_user(pool: web::Data<PgPool>) -> HttpResponse {
-        // Add actual implementation
-        HttpResponse::Ok().finish()
-    }
-    
-    pub async fn list_users(pool: web::Data<PgPool>) -> HttpResponse {
-        // Add actual implementation
-        HttpResponse::Ok().finish()
-    }
-    
-    pub async fn get_user(
-        pool: web::Data<PgPool>,
-        path: web::Path<i32>,
-    ) -> HttpResponse {
-        // Add actual implementation
-        HttpResponse::Ok().finish()
-    }
-    
-    pub async fn update_user(
-        pool: web::Data<PgPool>,
-        path: web::Path<i32>,
-    ) -> HttpResponse {
-        // Add actual implementation
-        HttpResponse::Ok().finish()
-    }
-    
-    pub async fn delete_user(
-        pool: web::Data<PgPool>,
-        path: web::Path<i32>,
-    ) -> HttpResponse {
-        // Add actual implementation
-        HttpResponse::Ok().finish()
-    }
 }
