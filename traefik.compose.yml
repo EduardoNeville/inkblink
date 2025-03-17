@@ -1,0 +1,27 @@
+services:
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"            # Enables the dashboard (optional)
+      - "--providers.docker=true"        # Enables Docker provider
+      - "--entrypoints.web.address=:80"  # Web entrypoint on container port 80
+      - "--entrypoints.traefik.address=:8080"  # Dashboard entrypoint on container port 8080
+    ports:
+      - "8000:80"    # Maps host port 8000 to container port 80 (web)
+      - "8081:8080"  # Maps host port 8081 to container port 8080 (dashboard)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  app:
+    build: .
+    labels:
+      # Frontend router (for /)
+      - "traefik.http.routers.app.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.app.service=frontend-service"
+      - "traefik.http.services.frontend-service.loadbalancer.server.port=3000"
+      # Backend router (for /api)
+      - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.api.service=api-service"
+      - "traefik.http.services.api-service.loadbalancer.server.port=8080"
+    volumes:
+      - ./data.db:/app/data.db  # Persist SQLite data

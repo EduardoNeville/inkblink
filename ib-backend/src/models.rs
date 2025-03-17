@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 // Transaction type enum matching the database enum
-#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
-#[sqlx(type_name = "transaction_type", rename_all = "lowercase")]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum TransactionType {
     Generate,
     Style,

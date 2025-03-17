@@ -1,6 +1,5 @@
 // create-page.tsx
 import { useState } from 'react';
-import { generateImage, generateImageWithStyle } from '@/lib/image-generation';
 import { Button } from '@/components/ui/button';
 
 export default function Create() {
@@ -21,7 +20,7 @@ export default function Create() {
     const outputPath = './initial_image.jpeg';
 
     try {
-      await generateImage(prompt, outputPath);
+      //await generateImage(prompt, outputPath);
       setInitialImagePath(outputPath);
     } catch (error) {
       console.error('Error generating initial image:', error);
@@ -46,7 +45,7 @@ export default function Create() {
     const outputPath = './styled_image.webp';
 
     try {
-      await generateImageWithStyle(initialImagePath, stylePrompt, outputPath);
+      //await generateImageWithStyle(initialImagePath, stylePrompt, outputPath);
       setStyledImagePath(outputPath);
     } catch (error) {
       console.error('Error generating styled image:', error);

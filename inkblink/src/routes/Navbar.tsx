@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Menu, X } from "lucide-react";
@@ -13,22 +12,22 @@ export function Navbar() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Fetch user session on mount and listen for auth changes
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
+  //useEffect(() => {
+  //  const fetchUser = async () => {
+  //    const { data: { user } } = await supabase.auth.getUser();
+  //    setUser(user);
+  //  };
 
-    fetchUser();
+  //  fetchUser();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+  //  const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+  //    setUser(session?.user ?? null);
+  //  });
 
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, []);
+  //  return () => {
+  //    authListener?.subscription.unsubscribe();
+  //  };
+  //}, []);
 
   // Handle scroll behavior for small screens
   useEffect(() => {
@@ -53,7 +52,7 @@ export function Navbar() {
 
   // Handle logout
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    //await supabase.auth.signOut();
     setUser(null);
     navigate("/");
     setIsExpanded(false); // Close menu on logout

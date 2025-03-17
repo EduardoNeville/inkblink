@@ -1,4 +1,3 @@
-import { handleLogin, handleSignup, handleGoogleLogin } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -16,13 +15,13 @@ export default function Signup() {
     e.preventDefault();
     setError(null);
     
-    const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
-    };
+    //const target = e.target as typeof e.target & {
+    //  email: { value: string };
+    //  password: { value: string };
+    //};
     
     try {
-      await handleLogin(target.email.value, target.password.value);
+      //await handleLogin(target.email.value, target.password.value);
       navigate("/create");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -34,14 +33,14 @@ export default function Signup() {
     e.preventDefault();
     setError(null);
 
-    const target = e.target as typeof e.target & {
-      name: { value: string };
-      email: { value: string };
-      password: { value: string };
-    };
+    //const target = e.target as typeof e.target & {
+    //  name: { value: string };
+    //  email: { value: string };
+    //  password: { value: string };
+    //};
 
     try {
-      await handleSignup(target.name.value, target.email.value, target.password.value);
+      //await handleSignup(target.name.value, target.email.value, target.password.value);
       navigate("/create");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -50,7 +49,7 @@ export default function Signup() {
 
   const onGoogleLogin = async () => {
     try {
-      await handleGoogleLogin();
+      //await handleGoogleLogin();
       navigate("/create");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
