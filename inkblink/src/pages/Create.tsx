@@ -1,15 +1,18 @@
-// create-page.tsx
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 export default function Create() {
-  const [initialImagePath, setInitialImagePath] = useState<string | null>(null);
+  const [initialImageId, setInitialImageId] = useState<string | null>(null); // Store icon ID instead of path
+  const [initialImageUrl, setInitialImageUrl] = useState<string | null>(null); // Store fetched image URL
   const [styledImagePath, setStyledImagePath] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>('');
   const [stylePrompt, setStylePrompt] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Function to generate the first image
+  // Replace with your user ID (could come from auth context)
+  const userId = "550e8400-e29b-41d4-a716-446655440000"; // Example UUID, adjust as needed
+
+  // Function to generate the initial image via backend API
   const handleGenerateInitialImage = async () => {
     if (!prompt) {
       alert('Please enter a prompt for the initial image.');
@@ -17,11 +20,30 @@ export default function Create() {
     }
 
     setLoading(true);
-    const outputPath = './initial_image.jpeg';
 
     try {
-      //await generateImage(prompt, outputPath);
-      setInitialImagePath(outputPath);
+      const response = await fetch('http://localhost:8000/api/icons', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          icon_pack_id: null, // Optional, set if needed
+          metadata: prompt,   // Send the prompt as metadata
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate icon');
+      }
+
+      const data = await response.json();
+      const iconId = data.id;
+      setInitialImageId(iconId);
+
+      // Fetch the generated image
+      setInitialImageUrl(`http://localhost:8000/api/icons/${iconId}`);
     } catch (error) {
       console.error('Error generating initial image:', error);
       alert('Failed to generate the initial image.');
@@ -30,9 +52,9 @@ export default function Create() {
     setLoading(false);
   };
 
-  // Function to generate a styled image using the initial image
+  // Placeholder for styled image (not implemented in backend yet)
   const handleGenerateStyledImage = async () => {
-    if (!initialImagePath) {
+    if (!initialImageId) {
       alert('Please generate an initial image first.');
       return;
     }
@@ -42,16 +64,8 @@ export default function Create() {
     }
 
     setLoading(true);
-    const outputPath = './styled_image.webp';
-
-    try {
-      //await generateImageWithStyle(initialImagePath, stylePrompt, outputPath);
-      setStyledImagePath(outputPath);
-    } catch (error) {
-      console.error('Error generating styled image:', error);
-      alert('Failed to generate the styled image.');
-    }
-
+    // Implement styled image generation here if needed
+    setStyledImagePath(null); // Placeholder until backend supports this
     setLoading(false);
   };
 
@@ -87,11 +101,11 @@ export default function Create() {
           {loading ? 'Generating...' : 'Generate Initial Image'}
         </Button>
 
-        {initialImagePath && (
+        {initialImageUrl && (
           <div className="mt-6 flex flex-col items-center">
             <p className="text-center mb-2 text-primary/70">Initial Image:</p>
             <img
-              src={initialImagePath}
+              src={initialImageUrl}
               alt="Initial"
               className="w-full max-h-96 object-contain rounded-lg border border-primary/20"
             />
@@ -100,7 +114,7 @@ export default function Create() {
       </div>
 
       {/* Generate Styled Image Section */}
-      {initialImagePath && (
+      {initialImageUrl && (
         <div className="border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow bg-primary text-white">
           <div className="mb-2 flex justify-center">
             <span className="bg-accent text-white text-xs font-bold px-2 py-1 rounded-full">

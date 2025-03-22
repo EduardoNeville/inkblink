@@ -1,344 +1,364 @@
-//use std::env;
-//
-use actix_web::{web, HttpResponse, Error};
+use actix_web::{get, post, web, HttpResponse, Responder};
+use diesel::prelude::*;
+use crate::{
+    model::{AppState, CreateIcon, CreateUser, Icon, TransactionType, User},
+    schema::{icons, transactions, users},
+};
+use std::env;
+use reqwest::Client;
+use serde::Serialize;
+use thiserror::Error;
 
-use crate::{models::*, AppState};
-
-// --- Users Handlers ---
-pub async fn create_user(app_state: web::Data<AppState>, user: web::Json<CreateUser>) -> Result<HttpResponse, Error> {
-    let mut conn = app_state.pool.get().map_err(|e| {
-        actix_web::error::ErrorInternalServerError(format!("Failed to get DB connection: {}", e))
-    })?;
-    let user = user.into_inner();
-
-    conn.execute(
-            "INSERT INTO users (email, username, inkbucks, created_at) VALUES (?1, ?2, 5)",
-            [user.email, user.username]
-        )
-    .map_err(|e| actix_web::error::ErrorInternalServerError(e))?;
-
-    Ok(HttpResponse::Ok().body("User created"))
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("Database connection failed: {0}")]
+    DbConnection(String),
+    #[error("Database operation failed: {0}")]
+    DbOperation(#[from] diesel::result::Error),
+    #[error("Image generation failed: {0}")]
+    ImageGeneration(String),
+    #[error("User not found")]
+    UserNotFound,
+    #[error("Insufficient inkbucks")]
+    InsufficientInkbucks,
+    #[error("Internal server error: {0}")]
+    InternalServerError(String),
 }
 
-//
-//pub async fn get_user(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let user_id = path.into_inner();
-//    let result = sqlx::query_as!(
-//        User,
-//        "SELECT id, email, username, inkbucks, created_at FROM users WHERE id = $1",
-//        user_id
-//    )
-//    .fetch_one(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(user) => HttpResponse::Ok().json(user),
-//        Err(sqlx::Error::RowNotFound) => HttpResponse::NotFound().body("User not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn update_user(
-//    app_state: web::Data<AppState>,
-//    path: web::Path<Uuid>,
-//    update: web::Json<UpdateUser>,
-//) -> HttpResponse {
-//    let user_id = path.into_inner();
-//    let update = update.into_inner();
-//    let result = sqlx::query!(
-//        "UPDATE users SET email = COALESCE($1, email), username = COALESCE($2, username), inkbucks = COALESCE($3, inkbucks) WHERE id = $4",
-//        update.email,
-//        update.username,
-//        update.inkbucks,
-//        user_id
-//    )
-//    .execute(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(res) if res.rows_affected() > 0 => HttpResponse::Ok().finish(),
-//        Ok(_) => HttpResponse::NotFound().body("User not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn delete_user(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let user_id = path.into_inner();
-//    let result = sqlx::query!("DELETE FROM users WHERE id = $1", user_id)
-//        .execute(&app_state.pool)
-//        .await;
-//
-//    match result {
-//        Ok(res) if res.rows_affected() > 0 => HttpResponse::Ok().finish(),
-//        Ok(_) => HttpResponse::NotFound().body("User not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//// --- Icon Packs Handlers ---
-//pub async fn create_icon_pack(app_state: web::Data<AppState>, pack: web::Json<CreateIconPack>) -> HttpResponse {
-//    let pack = pack.into_inner();
-//    let result = sqlx::query_as!(
-//        IconPack,
-//        "INSERT INTO icon_packs (user_id, name) VALUES ($1, $2) RETURNING id, user_id, name, created_at",
-//        pack.user_id,
-//        pack.name
-//    )
-//    .fetch_one(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(pack) => HttpResponse::Ok().json(pack),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn list_icon_packs(app_state: web::Data<AppState>) -> HttpResponse {
-//    let result = sqlx::query_as!(
-//        IconPack,
-//        "SELECT id, user_id, name, created_at FROM icon_packs"
-//    )
-//    .fetch_all(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(packs) => HttpResponse::Ok().json(packs),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn get_icon_pack(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let pack_id = path.into_inner();
-//    let result = sqlx::query_as!(
-//        IconPack,
-//        "SELECT id, user_id, name, created_at FROM icon_packs WHERE id = $1",
-//        pack_id
-//    )
-//    .fetch_one(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(pack) => HttpResponse::Ok().json(pack),
-//        Err(sqlx::Error::RowNotFound) => HttpResponse::NotFound().body("Icon pack not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn update_icon_pack(
-//    app_state: web::Data<AppState>,
-//    path: web::Path<Uuid>,
-//    update: web::Json<UpdateIconPack>,
-//) -> HttpResponse {
-//    let pack_id = path.into_inner();
-//    let update = update.into_inner();
-//    let result = sqlx::query!(
-//        "UPDATE icon_packs SET name = COALESCE($1, name) WHERE id = $2",
-//        update.name,
-//        pack_id
-//    )
-//    .execute(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(res) if res.rows_affected() > 0 => HttpResponse::Ok().finish(),
-//        Ok(_) => HttpResponse::NotFound().body("Icon pack not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn delete_icon_pack(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let pack_id = path.into_inner();
-//    let result = sqlx::query!("DELETE FROM icon_packs WHERE id = $1", pack_id)
-//        .execute(&app_state.pool)
-//        .await;
-//
-//    match result {
-//        Ok(res) if res.rows_affected() > 0 => HttpResponse::Ok().finish(),
-//        Ok(_) => HttpResponse::NotFound().body("Icon pack not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//// --- Icons Handlers ---
-//
-//pub async fn list_icons(app_state: web::Data<AppState>) -> HttpResponse {
-//    let result = sqlx::query_as!(
-//        Icon,
-//        "SELECT id, user_id, icon_pack_id, image_url, metadata, created_at FROM icons"
-//    )
-//    .fetch_all(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(icons) => HttpResponse::Ok().json(icons),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-///// Generate a stylized prompt for icons.
-//fn generate_prompt(name: &str) -> String {
-//    format!("Generate a minimalist icon for {}. Draw it with simple geometric shapes, flowy like sketched with an ink pen. Bold, simple, and monochrome.", name)
-//}
-//
-///// Runs a reqwest HTTP request to generate an image.
-//async fn generate_image_via_reqwest(prompt: &str) -> Result<Vec<u8>, String> {
-//    let api_key = env::var("STABILITY_API_KEY").unwrap_or_else(|_| "sk-K8H8bsXkAbdnnOZDlZGMjICh1FHG6RNuR52BYjElCV4b8gOs".to_string());
-//    let url = "https://api.stability.ai/v2beta/stable-image/generate/sd3";
-//    
-//    let client = Client::new();
-//    let form = reqwest::multipart::Form::new()
-//        .text("prompt", prompt.to_string())
-//        .text("output_format", "jpeg".to_string());
-//
-//    let response = client
-//        .post(url)
-//        .header("Authorization", format!("Bearer {}", api_key))
-//        .header("Accept", "image/*")
-//        .multipart(form)
-//        .send()
-//        .await
-//        .map_err(|e| format!("Request failed: {}", e))?;
-//
-//    if response.status().is_success() {
-//        let image_data = response.bytes().await.map_err(|e| format!("Failed to read response bytes: {}", e))?;
-//        Ok(image_data.to_vec())
-//    } else {
-//        Err(format!("Failed to generate image. HTTP Status: {}", response.status()))
-//    }
-//}
-//
-///// Handler for creating an icon with actual image generation, using `reqwest`.
-//pub async fn create_icon(
-//    app_state: web::Data<AppState>,
-//    icon: web::Json<CreateIcon>,
-//) -> HttpResponse {
-//    let icon = icon.into_inner();
-//    let prompt = generate_prompt(&icon.metadata.unwrap().to_string());
-//
-//    match generate_image_via_reqwest(&prompt).await {
-//        Ok(image_data) => {
-//            let result = sqlx::query_as!(
-//                Icon,
-//                "INSERT INTO icons (user_id, icon_pack_id, image_url, metadata, image_data) 
-//                 VALUES ($1, $2, $3, $4, $5) 
-//                 RETURNING id, user_id, icon_pack_id, image_url, metadata, image_data, created_at",
-//                icon.user_id,
-//                icon.icon_pack_id,
-//                "stored_in_db", // No external URL, since stored in DB
-//                icon.metadata,
-//                &image_data
-//            )
-//            .fetch_one(&app_state.pool)
-//            .await;
-//
-//            match result {
-//                Ok(icon) => HttpResponse::Ok().json(icon),
-//                Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//            }
-//        }
-//        Err(err) => HttpResponse::InternalServerError().body(err),
-//    }
-//}
-//
-///// Handler to retrieve an image from the database.
-//pub async fn get_icon_image(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let icon_id = path.into_inner();
-//    match sqlx::query!("SELECT image_data FROM icons WHERE id = $1", icon_id)
-//        .fetch_one(&app_state.pool)
-//        .await
-//    {
-//        Ok(record) => match record.image_data {
-//            Some(data) => HttpResponse::Ok()
-//                .content_type("image/jpeg")
-//                .body(data),
-//            None => HttpResponse::NotFound().body("Image not found"),
-//        },
-//        Err(_) => HttpResponse::InternalServerError().body("Error retrieving image"),
-//    }
-//}
-//
-//pub async fn delete_icon(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let icon_id = path.into_inner();
-//    let result = sqlx::query!("DELETE FROM icons WHERE id = $1", icon_id)
-//        .execute(&app_state.pool)
-//        .await;
-//
-//    match result {
-//        Ok(res) if res.rows_affected() > 0 => HttpResponse::Ok().finish(),
-//        Ok(_) => HttpResponse::NotFound().body("Icon not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//// --- Transactions Handlers ---
-//pub async fn create_transaction(app_state: web::Data<AppState>, tx: web::Json<CreateTransaction>) -> HttpResponse {
-//    let tx = tx.into_inner();
-//    let result = sqlx::query_as!(
-//        Transaction,
-//        "INSERT INTO transactions (user_id, type, icon_id, amount) VALUES ($1, $2, $3, $4) RETURNING id, user_id, type AS \"type_: TransactionType\", icon_id, amount, created_at",
-//        tx.user_id,
-//        tx.type_ as TransactionType,
-//        tx.icon_id,
-//        tx.amount
-//    )
-//    .fetch_one(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(tx) => HttpResponse::Ok().json(tx),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn list_transactions(app_state: web::Data<AppState>) -> HttpResponse {
-//    let result = sqlx::query_as!(
-//        Transaction,
-//        "SELECT id, user_id, type AS \"type_: TransactionType\", icon_id, amount, created_at FROM transactions"
-//    )
-//    .fetch_all(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(txs) => HttpResponse::Ok().json(txs),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//pub async fn get_transaction(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let tx_id = path.into_inner();
-//    let result = sqlx::query_as!(
-//        Transaction,
-//        "SELECT id, user_id, type AS \"type_: TransactionType\", icon_id, amount, created_at FROM transactions WHERE id = $1",
-//        tx_id
-//    )
-//    .fetch_one(&app_state.pool)
-//    .await;
-//
-//    match result {
-//        Ok(tx) => HttpResponse::Ok().json(tx),
-//        Err(sqlx::Error::RowNotFound) => HttpResponse::NotFound().body("Transaction not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
-//
-//// Note: Update and Delete for transactions might not be needed if they are immutable, but included for completeness
-//pub async fn update_transaction(
-//    pool: web::Data<PgPool>,
-//    path: web::Path<Uuid>,
-//    _update: web::Json<()> // Placeholder; transactions typically don't update
-//) -> HttpResponse {
-//    HttpResponse::MethodNotAllowed().body("Transactions are immutable and cannot be updated")
-//}
-//
-//pub async fn delete_transaction(app_state: web::Data<AppState>, path: web::Path<Uuid>) -> HttpResponse {
-//    let tx_id = path.into_inner();
-//    let result = sqlx::query!("DELETE FROM transactions WHERE id = $1", tx_id)
-//        .execute(&app_state.pool)
-//        .await;
-//
-//    match result {
-//        Ok(res) if res.rows_affected() > 0 => HttpResponse::Ok().finish(),
-//        Ok(_) => HttpResponse::NotFound().body("Transaction not found"),
-//        Err(e) => HttpResponse::InternalServerError().body(e.to_string()),
-//    }
-//}
+impl actix_web::ResponseError for AppError {
+    fn status_code(&self) -> actix_web::http::StatusCode {
+        match self {
+            AppError::DbConnection(_) => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::DbOperation(_) => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::ImageGeneration(_) => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::UserNotFound => actix_web::http::StatusCode::BAD_REQUEST,
+            AppError::InsufficientInkbucks => actix_web::http::StatusCode::PAYMENT_REQUIRED,
+            AppError::InternalServerError(_) => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::build(self.status_code())
+            .json(serde_json::json!({"status": "fail", "message": self.to_string()}))
+    }
+}
+
+#[derive(Serialize)]
+struct IconResponse {
+    status: String,
+    data: IconData,
+}
+
+#[derive(Serialize)]
+struct IconData {
+    icon: FilteredIcon,
+}
+
+#[derive(Serialize)]
+struct FilteredIcon {
+    id: i32,
+    user_id: i32,
+    icon_pack_id: Option<i32>,
+    metadata: Option<String>,
+}
+
+#[derive(Serialize)]
+struct UserResponse {
+    status: String,
+    data: UserData,
+}
+
+#[derive(Serialize)]
+struct UserData {
+    user: FilteredUser,
+}
+
+#[derive(Serialize)]
+struct FilteredUser {
+    id: i32,
+    email: String,
+    username: String,
+    inkbucks: i32,
+}
+
+fn generate_prompt(name: &str) -> String {
+    format!(
+        "Generate a minimalist icon for {}. Draw it with simple geometric shapes, flowy like sketched with an ink pen. Bold, simple, and monochrome.",
+        name
+    )
+}
+
+async fn generate_image(prompt: &str) -> Result<Vec<u8>, AppError> {
+    let api_key = env::var("STABILITY_API_KEY").unwrap_or_else(|_| {
+        "sk-K8H8bsXkAbdnnOZDlZGMjICh1FHG6RNuR52BYjElCV4b8gOs".to_string()
+    });
+    let url = "https://api.stability.ai/v2beta/stable-image/generate/sd3";
+
+    let client = Client::new();
+    let form = reqwest::multipart::Form::new()
+        .text("prompt", prompt.to_string())
+        .text("output_format", "jpeg");
+
+    let response = client
+        .post(url)
+        .header("Authorization", format!("Bearer {}", api_key))
+        .header("Accept", "image/*")
+        .multipart(form)
+        .send()
+        .await
+        .map_err(|e| AppError::ImageGeneration(format!("Request failed: {}", e)))?;
+
+    if response.status().is_success() {
+        let image_data = response
+            .bytes()
+            .await
+            .map_err(|e| AppError::ImageGeneration(format!("Failed to read response bytes: {}", e)))?;
+        Ok(image_data.to_vec())
+    } else {
+        Err(AppError::ImageGeneration(format!(
+            "Failed to generate image. HTTP Status: {}",
+            response.status()
+        )))
+    }
+}
+
+#[post("/icons")]
+async fn create_icon(
+    data: web::Data<AppState>,
+    icon: web::Json<CreateIcon>,
+) -> impl Responder {
+    let icon = icon.into_inner();
+    let prompt = generate_prompt(&icon.metadata.as_ref().unwrap_or(&"default".to_string()));
+
+    let mut conn = match data.db_pool.get() {
+        Ok(conn) => conn,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to get DB connection: {}", e)
+        })),
+    };
+
+    let icon_id = match conn.transaction(|conn| {
+        let inkbucks: i32 = match users::table
+            .filter(users::id.eq(icon.user_id))
+            .select(users::inkbucks)
+            .first(conn) {
+            Ok(inkbucks) => inkbucks,
+            Err(diesel::result::Error::NotFound) => return Err(AppError::UserNotFound),
+            Err(e) => return Err(AppError::DbOperation(e)),
+        };
+
+        let transaction_amount = -1;
+        if inkbucks + transaction_amount < 0 {
+            return Err(AppError::InsufficientInkbucks);
+        }
+
+        let new_transaction = (
+            transactions::user_id.eq(icon.user_id),
+            transactions::type_.eq(match TransactionType::Generate {
+                TransactionType::Generate => "generate",
+                TransactionType::Style => "style",
+                TransactionType::Edit => "edit",
+            }),
+            transactions::icon_id.eq(0),
+            transactions::amount.eq(transaction_amount),
+        );
+
+        let transaction_id: i32 = match diesel::insert_into(transactions::table)
+            .values(new_transaction)
+            .returning(transactions::id)
+            .get_result(conn) {
+            Ok(id) => id,
+            Err(e) => return Err(AppError::DbOperation(e)),
+        };
+
+        let new_icon = (
+            icons::user_id.eq(icon.user_id),
+            icons::icon_pack_id.eq(icon.icon_pack_id),
+            icons::metadata.eq(icon.metadata.clone()),
+            icons::image_data.eq(Vec::<u8>::new()),
+        );
+
+        let icon_id: i32 = match diesel::insert_into(icons::table)
+            .values(new_icon)
+            .returning(icons::id)
+            .get_result(conn) {
+            Ok(id) => id,
+            Err(e) => return Err(AppError::DbOperation(e)),
+        };
+
+        match diesel::update(transactions::table.filter(transactions::id.eq(transaction_id)))
+            .set(transactions::icon_id.eq(icon_id))
+            .execute(conn) {
+            Ok(_) => (),
+            Err(e) => return Err(AppError::DbOperation(e)),
+        };
+
+        match diesel::update(users::table.filter(users::id.eq(icon.user_id)))
+            .set(users::inkbucks.eq(users::inkbucks + transaction_amount))
+            .execute(conn) {
+            Ok(_) => (),
+            Err(e) => return Err(AppError::DbOperation(e)),
+        };
+
+        Ok(icon_id)
+    }) {
+        Ok(id) => id,
+        Err(AppError::UserNotFound) => return HttpResponse::BadRequest().json(serde_json::json!({
+            "status": "fail",
+            "message": "User not found"
+        })),
+        Err(AppError::InsufficientInkbucks) => return HttpResponse::PaymentRequired().json(serde_json::json!({
+            "status": "fail",
+            "message": "Insufficient inkbucks"
+        })),
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": e.to_string()
+        })),
+    };
+
+    let image_data = match generate_image(&prompt).await {
+        Ok(data) => data,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": e.to_string()
+        })),
+    };
+
+    match diesel::update(icons::table.filter(icons::id.eq(icon_id)))
+        .set(icons::image_data.eq(image_data))
+        .execute(&mut conn) {
+        Ok(_) => (),
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to update icon: {}", e)
+        })),
+    };
+
+    let inserted_icon: Icon = match icons::table
+        .filter(icons::id.eq(icon_id))
+        .first(&mut conn) {
+        Ok(icon) => icon,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to retrieve icon: {}", e)
+        })),
+    };
+
+    let response = IconResponse {
+        status: "success".to_string(),
+        data: IconData {
+            icon: FilteredIcon {
+                id: inserted_icon.id,
+                user_id: inserted_icon.user_id,
+                icon_pack_id: inserted_icon.icon_pack_id,
+                metadata: inserted_icon.metadata,
+            },
+        },
+    };
+
+    HttpResponse::Ok().json(response)
+}
+
+#[get("/icons/{id}/image")]
+async fn get_icon_image(
+    data: web::Data<AppState>,
+    path: web::Path<i32>,
+) -> impl Responder {
+    let icon_id = path.into_inner();
+    let mut conn = match data.db_pool.get() {
+        Ok(conn) => conn,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to get DB connection: {}", e)
+        })),
+    };
+
+    let image_data: Option<Vec<u8>> = match icons::table
+        .filter(icons::id.eq(icon_id))
+        .select(icons::image_data)
+        .first(&mut conn)
+        .optional() {
+        Ok(data) => data,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to retrieve image: {}", e)
+        })),
+    };
+
+    match image_data {
+        Some(data) => HttpResponse::Ok()
+            .content_type("image/jpeg")
+            .body(data),
+        None => HttpResponse::NotFound().json(serde_json::json!({
+            "status": "fail",
+            "message": "Image not found"
+        })),
+    }
+}
+
+#[post("/users")]
+async fn create_user(
+    data: web::Data<AppState>,
+    user: web::Json<CreateUser>,
+) -> impl Responder {
+    let user = user.into_inner();
+    let mut conn = match data.db_pool.get() {
+        Ok(conn) => conn,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to get DB connection: {}", e)
+        })),
+    };
+
+    let new_user = (
+        users::email.eq(user.email.clone()),
+        users::username.eq(user.username.clone()),
+        users::inkbucks.eq(5),
+    );
+
+    let user_id: i32 = match diesel::insert_into(users::table)
+        .values(new_user)
+        .returning(users::id)
+        .get_result(&mut conn) {
+        Ok(id) => id,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to insert user: {}", e)
+        })),
+    };
+
+    let inserted_user: User = match users::table
+        .filter(users::id.eq(user_id))
+        .first(&mut conn) {
+        Ok(user) => user,
+        Err(e) => return HttpResponse::InternalServerError().json(serde_json::json!({
+            "status": "fail",
+            "message": format!("Failed to retrieve user: {}", e)
+        })),
+    };
+
+    let response = UserResponse {
+        status: "success".to_string(),
+        data: UserData {
+            user: FilteredUser {
+                id: inserted_user.id,
+                email: inserted_user.email,
+                username: inserted_user.username,
+                inkbucks: inserted_user.inkbucks,
+            },
+        },
+    };
+
+    HttpResponse::Ok().json(response)
+}
+
+pub fn config(conf: &mut web::ServiceConfig) {
+    let scope = web::scope("/api")
+        .service(create_icon)
+        .service(get_icon_image)
+        .service(create_user);
+
+    conf.service(scope);
+}

@@ -1,0 +1,38 @@
+services:
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"            # Enables the dashboard (optional, insecure for testing only)
+      - "--providers.docker=true"        # Enables Docker provider to detect services
+      - "--entrypoints.web.address=:80"  # Defines HTTP entrypoint on port 80
+      - "--entrypoints.traefik.address=:8080"  # Dashboard entrypoint on port 8080
+    ports:
+      - "80:80"    # Maps host port 80 to container port 80 (standard HTTP)
+      - "8080:8080"  # Maps host port 8080 to container port 8080 (dashboard)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Allows Traefik to communicate with Docker
+    networks:
+      - web
+
+  app:
+    build: .
+    labels:
+      # Router for the frontend (inkblink.xyz/)
+      - "traefik.enable=true"  # Explicitly enable Traefik for this service
+      - "traefik.http.routers.app.rule=Host(`inkblink.xyz`)"  # Matches your domain
+      - "traefik.http.routers.app.entrypoints=web"  # Uses the 'web' entrypoint (port 80)
+      - "traefik.http.routers.app.service=frontend-service"  # Links to frontend service
+      - "traefik.http.services.frontend-service.loadbalancer.server.port=3000"  # Frontend port in the app container
+      # Router for the backend (inkblink.xyz/api)
+      - "traefik.http.routers.api.rule=Host(`inkblink.xyz`) && PathPrefix(`/api`)"  # Matches domain + /api path
+      - "traefik.http.routers.api.entrypoints=web"  # Uses the 'web' entrypoint
+      - "traefik.http.routers.api.service=api-service"  # Links to backend service
+      - "traefik.http.services.api-service.loadbalancer.server.port=8080"  # Backend port in the app container
+    volumes:
+      - ./data.db:/app/data.db  # Persist SQLite data
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
