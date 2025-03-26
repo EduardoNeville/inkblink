@@ -22,15 +22,17 @@ export default function Create() {
     setLoading(true);
 
     try {
+      const idToken = localStorage.getItem("idToken");
       const response = await fetch('http://localhost:8000/api/icons', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify({
           user_id: userId,
-          icon_pack_id: null, // Optional, set if needed
-          metadata: prompt,   // Send the prompt as metadata
+          icon_pack_id: null,
+          metadata: prompt,
         }),
       });
 

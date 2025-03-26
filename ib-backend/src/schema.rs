@@ -1,14 +1,17 @@
 use diesel::prelude::*;
 
+// users table
 table! {
     users (id) {
         id -> Int4,
         email -> Text,
         username -> Text,
         inkbucks -> Int4,
+        uid -> Varchar,
     }
 }
 
+// icon table
 table! {
     icons (id) {
         id -> Int4,
@@ -19,6 +22,7 @@ table! {
     }
 }
 
+// transaction table
 table! {
     transactions (id) {
         id -> Int4,

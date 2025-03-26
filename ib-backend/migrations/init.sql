@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT UNIQUE NOT NULL,
     username TEXT UNIQUE NOT NULL,
     inkbucks INTEGER DEFAULT 0,
+    uid VARCHAR UNIQUE NOT NULL,
 );
 
 -- Icon_packs table

@@ -5,6 +5,7 @@ use crate::model::AppState;
 mod model;
 mod schema;
 mod handlers;
+mod auth;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -15,11 +16,12 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(
                 Cors::default()
-                    .allowed_origin("http://localhost:3000") // Adjust as needed
+                    .allowed_origin("http://localhost:8000") // Match Traefik frontend URL
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(vec![
                         actix_web::http::header::CONTENT_TYPE,
                         actix_web::http::header::ACCEPT,
+                        actix_web::http::header::AUTHORIZATION,
                     ])
                     .max_age(3600),
             )

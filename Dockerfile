@@ -2,20 +2,25 @@
 FROM rust AS backend-builder
 WORKDIR /app
 COPY ./ib-backend/ /app
+#RUN apt-get install pkgconfig openssl
 RUN cargo build --release
 
 # Stage 2: Build the frontend
-FROM node AS frontend-builder
+FROM node:23-alpine3.20 AS frontend-builder
 WORKDIR /app
 COPY ./inkblink/ /app
 RUN yarn install
 RUN yarn build
 
 # Stage 3: Combine into one container
-FROM node
+FROM node:23-bookworm-slim
 WORKDIR /app
+
+# Install dependencies
+#RUN apt install pkgconfig openssl
+
 # Copy the backend binary
-COPY --from=backend-builder /app/target/release/ib-backend /app/ib-backend
+COPY ./ib-backend/target/release/ib-backend /app/ib-backend
 # Copy backend sql migrations (init.sql)
 COPY --from=backend-builder /app/migrations /app/migrations
 

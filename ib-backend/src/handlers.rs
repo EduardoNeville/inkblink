@@ -1,12 +1,15 @@
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{dev::Payload, get, post, web, FromRequest, HttpRequest, HttpResponse, Responder};
 use diesel::prelude::*;
 use crate::{
     model::{AppState, CreateIcon, CreateUser, Icon, TransactionType, User},
     schema::{icons, transactions, users},
+    auth::verify_id_token,
 };
 use std::env;
 use reqwest::Client;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
+use std::pin::Pin;
+use futures::Future;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -79,6 +82,103 @@ struct FilteredUser {
     email: String,
     username: String,
     inkbucks: i32,
+}
+
+#[derive(Deserialize)]
+struct AuthRequest {
+    token: String,
+    email: String,
+    username: String,
+}
+
+#[post("/auth")]
+async fn auth(
+    data: web::Data<AppState>,
+    auth_req: web::Json<AuthRequest>,
+) -> Result<HttpResponse, AppError> {
+    let project_id = env::var("FIREBASE_PROJECT_ID").expect("FIREBASE_PROJECT_ID must be set");
+    let claims = verify_id_token(&auth_req.token, &project_id).await
+        .map_err(|e| AppError::InternalServerError(e.to_string()))?;
+
+    let uid = claims["sub"].as_str().unwrap_or("").to_string();
+    let email = auth_req.email.clone();
+    let username = auth_req.username.clone();
+
+    let mut conn = data.db_pool.get()
+        .map_err(|e| AppError::DbConnection(e.to_string()))?;
+
+    let user: Option<User> = users::table
+        .filter(users::uid.eq(&uid))
+        .first(&mut conn)
+        .optional()
+        .map_err(|e| AppError::DbOperation(e))?;
+
+    let user = if let Some(user) = user {
+        user
+    } else {
+        let new_user = (
+            users::uid.eq(&uid),
+            users::email.eq(&email),
+            users::username.eq(&username),
+            users::inkbucks.eq(5),
+        );
+        diesel::insert_into(users::table)
+            .values(new_user)
+            .get_result(&mut conn)
+            .map_err(|e| AppError::DbOperation(e))?
+    };
+
+    let response = UserResponse {
+        status: "success".to_string(),
+        data: UserData {
+            user: FilteredUser {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                inkbucks: user.inkbucks,
+            },
+        },
+    };
+
+    Ok(HttpResponse::Ok().json(response))
+}
+
+struct AuthenticatedUser {
+    id: i32,
+    uid: String,
+}
+
+impl FromRequest for AuthenticatedUser {
+    type Error = actix_web::Error;
+    type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
+
+    fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
+        let app_data = req.app_data::<web::Data<AppState>>().expect("AppState not found");
+        let auth_header = match req.headers().get("Authorization") {
+            Some(header) => header.to_str().unwrap_or(""),
+            None => return Box::pin(async { Err(actix_web::error::ErrorUnauthorized("Missing Authorization header")) }),
+        };
+
+        let token = auth_header.strip_prefix("Bearer ").unwrap_or("").to_string();
+        let project_id = env::var("FIREBASE_PROJECT_ID").expect("FIREBASE_PROJECT_ID must be set");
+
+        let app_data = app_data.clone();
+        Box::pin(async move {
+            let claims = verify_id_token(&token, &project_id).await
+                .map_err(|e| actix_web::error::ErrorUnauthorized(e.to_string()))?;
+            let uid = claims["sub"].as_str().unwrap_or("").to_string();
+            let mut conn = app_data.db_pool.get()
+                .map_err(|e| actix_web::error::ErrorInternalServerError(e))?;
+            let user: User = users::table
+                .filter(users::uid.eq(&uid))
+                .first(&mut conn)
+                .map_err(|_| actix_web::error::ErrorUnauthorized("User not found"))?;
+            Ok(AuthenticatedUser {
+                id: user.id,
+                uid: user.uid,
+            })
+        })
+    }
 }
 
 fn generate_prompt(name: &str) -> String {
@@ -356,6 +456,7 @@ async fn create_user(
 
 pub fn config(conf: &mut web::ServiceConfig) {
     let scope = web::scope("/api")
+        .service(auth)
         .service(create_icon)
         .service(get_icon_image)
         .service(create_user);

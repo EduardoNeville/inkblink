@@ -3,6 +3,7 @@ CREATE TABLE users (
     email TEXT NOT NULL,
     username TEXT NOT NULL,
     inkbucks INTEGER NOT NULL,
+    uid VARCHAR UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

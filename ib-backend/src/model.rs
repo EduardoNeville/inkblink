@@ -23,6 +23,7 @@ pub struct User {
     pub email: String,
     pub username: String,
     pub inkbucks: i32,
+    pub uid: String,
 }
 
 #[derive(Debug, Deserialize)]
