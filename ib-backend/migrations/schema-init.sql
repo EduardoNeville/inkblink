@@ -13,14 +13,14 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS icon_packs (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
+    name TEXT NOT NULL
 );
 
 -- Icons table
 CREATE TABLE IF NOT EXISTS icons (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    icon_pack_id INTEGER REFERENCE icon_packs(id) ON DELETE CASCADE,
+    icon_pack_id INTEGER REFERENCES icon_packs(id) ON DELETE CASCADE,
     metadata TEXT,
     image_data BYTEA NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -32,5 +32,5 @@ CREATE TABLE IF NOT EXISTS transactions (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     type TEXT NOT NULL CHECK(type IN ('generate', 'style', 'edit')),
     icon_id INTEGER NOT NULL REFERENCES icons(id) ON DELETE CASCADE,
-    amount INTEGER NOT NULL,
+    amount INTEGER NOT NULL
 );

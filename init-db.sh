@@ -43,3 +43,5 @@ psql -v ON_ERROR_STOP=1 --username "ib_usr" --dbname "postgres" <<-EOSQL
     END
     \$\$;
 EOSQL
+
+psql -U ib_usr -d ib_db -a -f /app/migrations/scheme-init.sql
