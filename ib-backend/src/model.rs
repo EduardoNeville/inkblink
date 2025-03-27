@@ -50,7 +50,11 @@ pub struct AppState {
 
 impl AppState {
     pub async fn init() -> AppState {
-        let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        let database_url = std::env::var("DATABASE_URL")
+            .unwrap_or_else(|_| "postgres://ib_usr:ib_pwd@db:5432/ib_db".to_string());
+        let database_url = String::from("postgres://ib_usr:ib_pwd@db:5432/ib_db");
+
+        println!("database_url: {}", &database_url);
         let manager = ConnectionManager::<PgConnection>::new(database_url);
         let pool = Pool::builder()
             .build(manager)

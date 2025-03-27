@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyAuRX4pox0ewYF5shBDfp4YsiFIwfkMlsk",
+  authDomain: "inkblink-5d5fa.firebaseapp.com",
+  projectId: "inkblink-5d5fa",
+  storageBucket: "inkblink-5d5fa.firebasestorage.app",
+  messagingSenderId: "706935704595",
+  appId: "1:706935704595:web:17892653a464fbc9af43e6",
+  measurementId: "G-QWCZHXV5PM"
 };
 
 const app = initializeApp(firebaseConfig);

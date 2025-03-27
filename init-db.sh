@@ -8,7 +8,7 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
 fi
 
 # For existing cluster, ensure ib_db exists and optionally clean up others
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "postgres" <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username "ib_usr" --dbname "postgres" <<-EOSQL
     -- Terminate active connections to all databases except system ones
     DO \$\$
     BEGIN
@@ -43,4 +43,3 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "postgres" <<-EOSQL
     END
     \$\$;
 EOSQL
-

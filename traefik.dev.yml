@@ -1,13 +1,15 @@
 services:
   db:
     image: postgres:15-alpine3.20
+    env_file:
+        - .env
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5433:5432"
     networks:
@@ -23,19 +25,7 @@ services:
       context: .
       args:
         VITE_SERVER_ENDPOINT: ${VITE_SERVER_ENDPOINT}
-        VITE_GOOGLE_OAUTH_CLIENT_ID: ${VITE_GOOGLE_OAUTH_CLIENT_ID}
-        VITE_GOOGLE_OAUTH_CLIENT_SECRET: ${VITE_GOOGLE_OAUTH_CLIENT_SECRET}
-        VITE_GOOGLE_OAUTH_REDIRECT: ${VITE_GOOGLE_OAUTH_REDIRECT}
-        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
-        VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN}
-        VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID}
-        VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
-        VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
-        VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
     environment:
-      - GOOGLE_OAUTH_CLIENT_ID=${GOOGLE_OAUTH_CLIENT_ID}
-      - GOOGLE_OAUTH_CLIENT_SECRET=${GOOGLE_OAUTH_CLIENT_SECRET}
-      - GOOGLE_OAUTH_REDIRECT_URL=${GOOGLE_OAUTH_REDIRECT_URL}
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - PSQL_DATABASE=${PSQL_DATABASE}
       - FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
@@ -72,8 +62,8 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=teste@teste.com
-      - PGADMIN_DEFAULT_PASSWORD=teste
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL} 
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     ports:
       - "16543:80"
     volumes:

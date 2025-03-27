@@ -84,6 +84,7 @@ export default function Signup() {
       body: JSON.stringify({ token: idToken, email, username: name }),
     });
     if (!response.ok) {
+      console.log("Response: ", response)
       throw new Error("Failed to sync user with backend");
     }
   };

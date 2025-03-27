@@ -96,22 +96,31 @@ async fn auth(
     data: web::Data<AppState>,
     auth_req: web::Json<AuthRequest>,
 ) -> Result<HttpResponse, AppError> {
-    let project_id = env::var("FIREBASE_PROJECT_ID").expect("FIREBASE_PROJECT_ID must be set");
+    let project_id = env::var("FIREBASE_PROJECT_ID").unwrap_or_else(|_| "inkblink-5d5fa".to_string());
     let claims = verify_id_token(&auth_req.token, &project_id).await
-        .map_err(|e| AppError::InternalServerError(e.to_string()))?;
+        .map_err(|e| {
+            println!("Error verify_id_token: {}", e);
+            return AppError::InternalServerError(e.to_string())
+        })?;
 
     let uid = claims["sub"].as_str().unwrap_or("").to_string();
     let email = auth_req.email.clone();
     let username = auth_req.username.clone();
 
     let mut conn = data.db_pool.get()
-        .map_err(|e| AppError::DbConnection(e.to_string()))?;
+        .map_err(|e| {
+            println!("Error conn: {}", e);
+            return AppError::DbConnection(e.to_string())
+        })?;
 
     let user: Option<User> = users::table
         .filter(users::uid.eq(&uid))
         .first(&mut conn)
         .optional()
-        .map_err(|e| AppError::DbOperation(e))?;
+        .map_err(|e| {
+            println!("Error filter eq uid: {}: {}", &uid, e);
+            return AppError::DbOperation(e)
+        })?;
 
     let user = if let Some(user) = user {
         user
@@ -125,7 +134,10 @@ async fn auth(
         diesel::insert_into(users::table)
             .values(new_user)
             .get_result(&mut conn)
-            .map_err(|e| AppError::DbOperation(e))?
+            .map_err(|e| {
+                println!("Error insert_into: {}", e);
+                return AppError::DbOperation(e)
+            })?
     };
 
     let response = UserResponse {
@@ -160,7 +172,7 @@ impl FromRequest for AuthenticatedUser {
         };
 
         let token = auth_header.strip_prefix("Bearer ").unwrap_or("").to_string();
-        let project_id = env::var("FIREBASE_PROJECT_ID").expect("FIREBASE_PROJECT_ID must be set");
+        let project_id = env::var("FIREBASE_PROJECT_ID").unwrap_or_else(|_| "inkblink-5d5fa".to_string());
 
         let app_data = app_data.clone();
         Box::pin(async move {
