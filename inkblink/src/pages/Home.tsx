@@ -1,85 +1,164 @@
 import { Button } from "@/components/ui/button"; // shadcn Button component
-import { ArrowRight } from "lucide-react"; // Icon from lucide-react
 import { useEffect, useRef, useState } from "react";
-import { FaStar, FaHeart, FaRocket, FaBolt } from "react-icons/fa";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback } from "react";
 import { ImageTextSection } from "@/components/ImageTextSection";
-
+import {
+  FaTwitter,
+  FaInstagram,
+  FaLinkedin,
+  FaChevronDown,
+  FaImage,
+  FaVideo,
+} from "react-icons/fa";
+import { InkBlobs } from "@/components/InkBlobs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 // Landing Section Component
-function LandingSection() {
-  const icons = [
-    <FaStar className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500" />,
-    <FaHeart className="w-12 h-12 sm:w-16 sm:h-16 text-red-500" />,
-    <FaRocket className="w-12 h-12 sm:w-16 sm:h-16 text-blue-500" />,
-    <FaBolt className="w-12 h-12 sm:w-16 sm:h-16 text-purple-500" />,
-  ];
+const platforms = [
+  { id: "twitter", name: "Twitter", icon: <FaTwitter className="text-blue-500" /> },
+  { id: "instagram", name: "Instagram", icon: <FaInstagram className="text-pink-500" /> },
+  { id: "linkedin", name: "LinkedIn", icon: <FaLinkedin className="text-blue-700" /> },
+];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+function PlatformSelect({
+  onSelect,
+}: {
+  onSelect?: (platform: typeof platforms[0]) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(platforms[0]);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Cycle through icons every 2 seconds to match animation duration
+  // Close dropdown on outside click
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % icons.length);
-    }, 2000); // 2-second interval
-    return () => clearInterval(interval);
-  }, [icons.length]);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  // Previous index for the outgoing enclosure
-  const prevIndex = (currentIndex - 1 + icons.length) % icons.length;
+  // Handle selection
+  const handleSelect = (platform: typeof platforms[0]) => {
+    setSelected(platform);
+    onSelect?.(platform);
+    setIsOpen(false);
+  };
 
   return (
-    <section className="relative flex items-center justify-center bg-background overflow-hidden">
-      <div className="text-center z-10 max-w-4xl mx-auto px-4">
-        {/* Icon wrapper with background div for depth */}
-        <div className="relative h-20 sm:h-24 mb-4 sm:mb-6 flex justify-center">
-          {/* Static background enclosure for depth */}
-          <div className="absolute w-20 h-20 bg-muted/50 rounded-xl shadow-md transform translate-y-4 scale-90 z-0"></div>
-          {icons.map((icon, index) => (
-            <div
-              key={index}
-              className={`absolute w-21 h-21 bg-muted rounded-xl overflow-hidden left-1/2 -translate-x-1/2 transition-all ease-in-out z-10 ${
-                index === currentIndex
-                  ? "animate-slide-up animation-delay-0" // Current: starts now
-                  : index === prevIndex
-                  ? "animate-slide-up animation-delay-[-0.5s]" // Previous: halfway done
-                  : "opacity-0 translate-y-[50%] hidden" // Fully hidden
+    <div className="relative w-full max-w-xs" ref={wrapperRef}>
+      {/* Trigger */}
+      <button
+        className="w-full bg-primary/30 text-primary border border-primary/20 rounded-full px-4 py-2 flex items-center justify-between shadow-md hover:border-primary transition"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <span className="flex items-center gap-2">
+          {selected.icon}
+          <span>{selected.name}</span>
+        </span>
+        <svg
+          className={`w-4 h-4 ml-2 transform transition-transform ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Dropdown list */}
+      {isOpen && (
+        <ul
+          className="absolute z-50 mt-2 w-full bg-white border border-primary/10 rounded-md shadow-md max-h-[200px] overflow-auto"
+          role="listbox"
+        >
+          {platforms.map((platform) => (
+            <li
+              key={platform.id}
+              onClick={() => handleSelect(platform)}
+              role="option"
+              aria-selected={selected.id === platform.id}
+              className={`px-4 py-2 flex items-center gap-2 hover:bg-primary/10 cursor-pointer ${
+                selected.id === platform.id ? "bg-primary/10" : ""
               }`}
             >
-              {/* Centered icon */}
-              <div className="absolute w-12 h-12 sm:w-16 sm:h-16 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                {icon}
-              </div>
-            </div>
+              {platform.icon}
+              <span>{platform.name}</span>
+            </li>
           ))}
-        </div>
-        {/* Header content */}
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-primary/50 tracking-tight">
-          Craft Icon Packs with <span className="text-primary">InkBlink</span>
+        </ul>
+      )}
+    </div>
+  );
+}
+
+const LandingSection = () => {
+  const [text, setText] = useState("");
+
+  return (
+    <section className="relative flex justify-center items-center min-h-screen px-4 bg-white">
+      {/* Blurred Background Image */}
+      <InkBlobs />
+
+      {/* Foreground content */}
+      <div className="relative z-10 flex flex-col items-center text-center space-y-6 max-w-2xl w-full">
+        {/* Title */}
+        <h1 className="text-5xl sm:text-6xl font-bold drop-shadow-md text-primary">
+          InkBlink
         </h1>
-        <p className="my-4 text-base sm:text-lg text-muted-foreground font-display">
-          Generate, style, and edit cohesive icon sets using InkBucks. Your creativity, our tools.
+        <p className="text-xl sm:text-2xl text-primary/90 font-light">
+          Turn posts into trends
         </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-3">
-          <Button
-            className="w-full sm:w-auto bg-white text-primary hover:bg-accent hover:text-white transition-all duration-300 rounded-full border-primary border-1"
-            size="lg"
-            variant="outline"
-          >
-            Join for free <ArrowRight className="ml-2 h-5 w-5 bg-muted rounded-full" />
-          </Button>
-          <Button
-            className="w-full sm:w-auto bg-primary text-white hover:bg-accent transition-all duration-300 rounded-full border-primary border-1"
-            size="lg"
-          >
-            See our plans <ArrowRight className="ml-2 h-5 w-5 bg-muted rounded-full text-primary" />
-          </Button>
+
+        {/* Prompt Bar */}
+        <div className="sticky flex flex-col sm:flex-row items-stretch w-full gap-3 mt-8">
+          {/* Social Media Bubble */}
+          <PlatformSelect />
+
+          {/* Input Bubble */}
+          <div className="flex w-full bg-primary/30 text-black rounded-full px-4 py-2 shadow-md items-center gap-3">
+            {/* Attach icon */}
+            <div className="flex gap-2 text-primary cursor-pointer">
+              <FaImage className="hover:text-primary/80" />
+              <FaVideo className="hover:text-primary/80" />
+            </div>
+            {/* Text input */}
+            <input
+              type="text"
+              placeholder="Write your best post..."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className="flex-grow outline-none bg-transparent text-sm placeholder:text-primary/80"
+            />
+            {/* Post button */}
+            <Button
+              className="bg-primary text-white rounded-full px-4 py-1 text-sm hover:bg-primary/80 transition"
+              size="sm"
+            >
+              Post
+            </Button>
+          </div>
         </div>
       </div>
     </section>
   );
-}
+};
 
 // Grid Section Component
 const GridSection = () => {
@@ -270,7 +349,7 @@ const AngledImageTextSection = () => (
 // Main Home Component
 export default function Home() {
   return (
-    <main className="flex flex-col min-h-screen max-w-7xl mx-auto gap-8 sm:gap-16 mt-30">
+    <main className="flex flex-col min-h-screen max-w-7xl mx-auto gap-8 sm:gap-16">
       <LandingSection />
       <GridSection />
       <ImageTextSection

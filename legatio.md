@@ -1,2025 +1,300 @@
-# PROMPT 588f6fbe-fbdc-4531-b18c-da74919fa8e8
+# PROMPT e7bfcea2-c95c-428c-bdb8-4de9adcbd94f
 
 
-Here is my current .env file too:
-```.env
-# Database configuration
-POSTGRES_USER=myuser
-POSTGRES_PASSWORD=mypassword
-POSTGRES_DB=mydb
+Using the shadcn select, I want the user to be able to select from different social medias. If the user
+selects one of the items then the icon becomes part of the display 'icon | next icon'
 
-# Stability AI API Key
-STABILITY_API_KEY=sk-K8H8bsXkAbdnnOZDlZGMjICh1FHG6RNuR52BYjElCV4b8gOs
+```example-select.tsx
+import * as React from "react"
 
-# Backend service
-DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
-BACKEND_HOST=0.0.0.0
-BACKEND_PORT=8080
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
-# Frontend service
-FRONTEND_HOST=0.0.0.0
-FRONTEND_PORT=5173
-VITE_API_URL=http://backend:8080/api
+export function SelectDemo() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="blueberry">Blueberry</SelectItem>
+          <SelectItem value="grapes">Grapes</SelectItem>
+          <SelectItem value="pineapple">Pineapple</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  )
+}
 ```
 
-Here is my directory tree:
-```sh
- .
-├──  legatio.md
-├──  docker-compose.yml
-├──  docker-compose.dev.yml
-├──  traefik.yml
-├──  inkblink
-│  ├──  package-lock.json
-│  ├──  yarn.lock
-│  ├──  README.md
-│  ├──  package.json
-│  ├──  tsconfig.app.json
-│  ├──  eslint.config.js
-│  ├──  vite.config.ts
-│  ├──  tsconfig.node.json
-│  ├──  .env.local
-│  ├──  tailwind.config.js
-│  ├──  components.json
-│  ├──  index.html
-│  ├──  Dockerfile
-│  ├──  tsconfig.json
-│  ├──  src
-│  │  ├──  output.css
-│  │  ├──  prev.css
-│  │  ├──  index.css
-│  │  ├──  App.tsx
-│  │  ├──  App.css
-│  │  ├──  main.tsx
-│  │  ├──  stripe.ts
-│  │  ├──  pages
-│  │  ├──  components
-│  │  ├──  lib
-│  │  ├──  routes
-│  │  ├──  vite-env.d.ts
-│  │  ├──  context
-│  │  ├──  api
-│  │  └──  assets
-│  ├──  misc
-│  │  ├──  Xing_SVGDreamer_Text_Guided_SVG_Generation_with_Diffusion_Model_CVPR_2024_paper.pdf
-│  │  ├──  DeepSVG.pdf
-│  │  └──  SVGBuilder.pdf
-│  ├──  .env.development
-│  └──  public
-│     ├── 󰕙 vite.svg
-│     └──  fonts
-├──  .env
-├──  .gitignore
-└──  ib-backend
-   ├──  Cargo.lock
-   ├──  Cargo.toml
-   ├──  Dockerfile
-   ├──  .env
-   ├──  target
-   │  ├──  .rustc_info.json
-   │  ├──  CACHEDIR.TAG
-   │  └──  debug
-   ├──  src
-   │  ├──  handlers.rs
-   │  ├──  main.rs
-   │  └──  models.rs
-   ├──  .dockerignore
-   └──  migrations
-      └──  init.sql
+
+# OUTPUT e7bfcea2-c95c-428c-bdb8-4de9adcbd94f
+To update your InkBlink landing section with a shadcn Select component that allows users to choose from multiple social media platforms (displaying the selected platform’s icon alongside the name), follow these steps:
+
+✅ Goal:
+
+- Use shadcn Select
+- Populate it with social media options
+- Update the selected icon + label when user selects a platform
+
+🔁 Final Result:
+You want something like:
+{Icon} | Twitter  
+And when the user changes the select, both the icon and name change accordingly.
+
+✅ Step-by-Step Code:
+
+1. Define your social media options as an array of objects that include a name, icon, and value.
+2. Integrate the Select component.
+3. On selection, update the selected platform state.
+
+👇 Here's the full working example:
+
+Update your LandingSection like this:
+
+🔧 Updated LandingSection.tsx excerpt:
+
+import:
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 ```
 
-When running 
-```sudo docker compose -f docker-compose.dev.yml up```
+then in your component:
 
-I have the following issue:
+```tsx
+const socialPlatforms = [
+  { name: "Twitter", value: "twitter", icon: <FaTwitter className="text-blue-400" /> },
+  { name: "Instagram", value: "instagram", icon: <FaInstagram className="text-pink-500" /> },
+  { name: "LinkedIn", value: "linkedin", icon: <FaLinkedin className="text-blue-700" /> },
+];
 
-[+] Running 4/4
- ✔ Volume "inkblink_db-data"      Created                                                                                                                    0.0s
- ✔ Container db                   Created                                                                                                                    0.2s
- ✔ Container inkblink-frontend-1  Created                                                                                                                    4.3s
- ✔ Container ib-backend           Created                                                                                                                    0.1s
-Attaching to db, ib-backend, frontend-1
-db          | The files belonging to this database system will be owned by user "postgres".
-db          | This user must also own the server process.
-db          |
-db          | The database cluster will be initialized with locale "en_US.utf8".
-db          | The default database encoding has accordingly been set to "UTF8".
-db          | The default text search configuration will be set to "english".
-db          |
-db          | Data page checksums are disabled.
-db          |
-db          | fixing permissions on existing directory /var/lib/postgresql/data ... ok
-db          | creating subdirectories ... ok
-db          | selecting dynamic shared memory implementation ... posix
-db          | selecting default max_connections ... 100
-db          | selecting default shared_buffers ... 128MB
-db          | selecting default time zone ... Etc/UTC
-db          | creating configuration files ... ok
-frontend-1  | yarn install v1.22.22
-ib-backend  |     Updating crates.io index
-frontend-1  | warning package-lock.json found. Your project contains lock files generated by tools other than Yarn. It is advised not to mix package managers in order to avoid resolution inconsistencies caused by unsynchronized lock files. To clear this warning, remove package-lock.json.
-frontend-1  | [1/4] Resolving packages...
-db          | running bootstrap script ... ok
-frontend-1  | [2/4] Fetching packages...
-frontend-1  | [3/4] Linking dependencies...
-db          | performing post-bootstrap initialization ... ok
-db          | initdb: warning: enabling "trust" authentication for local connections
-db          | You can change this by editing pg_hba.conf or using the option -A, or
-db          | --auth-local and --auth-host, the next time you run initdb.
-db          | syncing data to disk ... ok
-db          |
-db          |
-db          | Success. You can now start the database server using:
-db          |
-db          |     pg_ctl -D /var/lib/postgresql/data -l logfile start
-db          |
-ib-backend  |      Locking 319 packages to latest compatible versions
-ib-backend  |       Adding actix-cors v0.6.5 (available: v0.7.1)
-db          | waiting for server to start....2025-03-17 11:47:41.585 UTC [48] LOG:  starting PostgreSQL 13.20 (Debian 13.20-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
-db          | 2025-03-17 11:47:41.619 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-db          | 2025-03-17 11:47:41.634 UTC [49] LOG:  database system was shut down at 2025-03-17 11:47:40 UTC
-db          | 2025-03-17 11:47:41.645 UTC [48] LOG:  database system is ready to accept connections
-ib-backend  |  Downloading crates ...
-db          |  done
-db          | server started
-db          |
-db          | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
-db          |
-db          | waiting for server to shut down...2025-03-17 11:47:41.833 UTC [48] LOG:  received fast shutdown request
-db          | .2025-03-17 11:47:41.842 UTC [48] LOG:  aborting any active transactions
-db          | 2025-03-17 11:47:41.849 UTC [48] LOG:  background worker "logical replication launcher" (PID 55) exited with exit code 1
-db          | 2025-03-17 11:47:41.851 UTC [50] LOG:  shutting down
-db          | 2025-03-17 11:47:41.897 UTC [48] LOG:  database system is shut down
-db          |  done
-db          | server stopped
-db          |
-db          | PostgreSQL init process complete; ready for start up.
-db          |
-ib-backend  |   Downloaded actix-service v2.0.3
-ib-backend  |   Downloaded actix-server v2.5.1
-db          | 2025-03-17 11:47:41.988 UTC [1] LOG:  starting PostgreSQL 13.20 (Debian 13.20-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
-db          | 2025-03-17 11:47:41.989 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-db          | 2025-03-17 11:47:41.989 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-db          | 2025-03-17 11:47:42.000 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-ib-backend  |   Downloaded actix-router v0.5.3
-db          | 2025-03-17 11:47:42.010 UTC [61] LOG:  database system was shut down at 2025-03-17 11:47:41 UTC
-db          | 2025-03-17 11:47:42.025 UTC [1] LOG:  database system is ready to accept connections
-ib-backend  |   Downloaded equivalent v1.0.2
-ib-backend  |   Downloaded actix-rt v2.10.0
-ib-backend  |   Downloaded actix-macros v0.2.4
-ib-backend  |   Downloaded atoi v2.0.0
-ib-backend  |   Downloaded alloc-no-stdlib v2.0.4
-ib-backend  |   Downloaded actix-codec v0.5.2
-ib-backend  |   Downloaded foreign-types-shared v0.1.1
-ib-backend  |   Downloaded icu_properties v1.5.1
-ib-backend  |   Downloaded actix-cors v0.6.5
-ib-backend  |   Downloaded crossbeam-queue v0.3.12
-ib-backend  |   Downloaded atomic-waker v1.1.2
-ib-backend  |   Downloaded http-body v1.0.1
-ib-backend  |   Downloaded errno v0.3.10
-ib-backend  |   Downloaded convert_case v0.4.0
-ib-backend  |   Downloaded bytestring v1.4.0
-ib-backend  |   Downloaded autocfg v1.4.0
-ib-backend  |   Downloaded actix-web-codegen v4.3.0
-ib-backend  |   Downloaded alloc-stdlib v0.2.2
-ib-backend  |   Downloaded tower-service v0.3.3
-ib-backend  |   Downloaded tinyvec_macros v0.1.1
-ib-backend  |   Downloaded base64ct v1.7.3
-ib-backend  |   Downloaded futures-sink v0.3.31
-ib-backend  |   Downloaded write16 v1.0.0
-ib-backend  |   Downloaded futures-executor v0.3.31
-ib-backend  |   Downloaded want v0.3.1
-ib-backend  |   Downloaded block-buffer v0.10.4
-ib-backend  |   Downloaded adler2 v2.0.0
-ib-backend  |   Downloaded form_urlencoded v1.2.1
-ib-backend  |   Downloaded deranged v0.3.11
-ib-backend  |   Downloaded fastrand v2.3.0
-ib-backend  |   Downloaded yoke-derive v0.7.5
-ib-backend  |   Downloaded futures-task v0.3.31
-ib-backend  |   Downloaded futures-core v0.3.31
-ib-backend  |   Downloaded zerofrom v0.1.6
-ib-backend  |   Downloaded home v0.5.11
-ib-backend  |   Downloaded foreign-types v0.3.2
-ib-backend  |   Downloaded cpufeatures v0.2.17
-ib-backend  |   Downloaded either v1.15.0
-ib-backend  |   Downloaded foldhash v0.1.5
-ib-backend  |   Downloaded thiserror-impl v2.0.12
-ib-backend  |   Downloaded crypto-common v0.1.6
-ib-backend  |   Downloaded concurrent-queue v2.5.0
-ib-backend  |   Downloaded tower-layer v0.3.3
-ib-backend  |   Downloaded futures-io v0.3.31
-ib-backend  |   Downloaded httpdate v1.0.3
-ib-backend  |   Downloaded hex v0.4.3
-ib-backend  |   Downloaded digest v0.10.7
-ib-backend  |   Downloaded cfg-if v1.0.0
-ib-backend  |   Downloaded generic-array v0.14.7
-ib-backend  |   Downloaded crc-catalog v2.4.0
-ib-backend  |   Downloaded actix-utils v3.0.1
-ib-backend  |   Downloaded heck v0.5.0
-ib-backend  |   Downloaded ppv-lite86 v0.2.21
-ib-backend  |   Downloaded local-waker v0.1.4
-ib-backend  |   Downloaded http-body-util v0.1.3
-ib-backend  |   Downloaded byteorder v1.5.0
-ib-backend  |   Downloaded crc v3.2.1
-ib-backend  |   Downloaded num-conv v0.1.0
-ib-backend  |   Downloaded dotenvy v0.15.7
-ib-backend  |   Downloaded shlex v1.3.0
-ib-backend  |   Downloaded signal-hook-registry v1.4.2
-ib-backend  |   Downloaded openssl-macros v0.1.1
-ib-backend  |   Downloaded crc32fast v1.4.2
-ib-backend  |   Downloaded icu_locid_transform v1.5.0
-ib-backend  |   Downloaded icu_provider_macros v1.5.0
-ib-backend  |   Downloaded futures-channel v0.3.31
-ib-backend  |   Downloaded iana-time-zone v0.1.61
-ib-backend  |   Downloaded md-5 v0.10.6
-ib-backend  |   Downloaded hyper-tls v0.6.0
-ib-backend  |   Downloaded displaydoc v0.2.5
-ib-backend  |   Downloaded sync_wrapper v1.0.2
-ib-backend  |   Downloaded try-lock v0.2.5
-ib-backend  |   Downloaded time-core v0.1.3
-ib-backend  |   Downloaded derive_more v0.99.19
-ib-backend  |   Downloaded scopeguard v1.2.0
-ib-backend  |   Downloaded hyper-rustls v0.27.5
-ib-backend  |   Downloaded getrandom v0.2.15
-ib-backend  |   Downloaded cookie v0.16.2
-ib-backend  |   Downloaded rand_core v0.6.4
-ib-backend  |   Downloaded rustls-pemfile v2.2.0
-ib-backend  |   Downloaded serde_urlencoded v0.7.1
-ib-backend  |   Downloaded stable_deref_trait v1.2.0
-ib-backend  |   Downloaded stringprep v0.1.5
-ib-backend  |   Downloaded unicode-xid v0.2.6
-ib-backend  |   Downloaded sha2 v0.10.8
-ib-backend  |   Downloaded subtle v2.6.1
-ib-backend  |   Downloaded rand_core v0.9.3
-ib-backend  |   Downloaded whoami v1.5.2
-ib-backend  |   Downloaded fnv v1.0.7
-ib-backend  |   Downloaded icu_normalizer v1.5.0
-ib-backend  |   Downloaded zerovec-derive v0.10.3
-ib-backend  |   Downloaded icu_locid v1.5.0
-ib-backend  |   Downloaded icu_locid_transform_data v1.5.0
-ib-backend  |   Downloaded rand_chacha v0.9.0
-ib-backend  |   Downloaded sqlx-macros v0.8.3
-ib-backend  |   Downloaded semver v1.0.26
-ib-backend  |   Downloaded rand_chacha v0.3.1
-ib-backend  |   Downloaded hashlink v0.10.0
-ib-backend  |   Downloaded proc-macro2 v1.0.94
-ib-backend  |   Downloaded tokio-macros v2.5.0
-ib-backend  |   Downloaded synstructure v0.13.1
-ib-backend  |   Downloaded utf8_iter v1.0.4
-ib-backend  |   Downloaded spki v0.7.3
-ib-backend  |   Downloaded zeroize v1.8.1
-ib-backend  |   Downloaded zerofrom-derive v0.1.6
-ib-backend  |   Downloaded utf16_iter v1.0.5
-ib-backend  |   Downloaded writeable v0.5.5
-ib-backend  |   Downloaded smallvec v1.14.0
-ib-backend  |   Downloaded tokio-native-tls v0.3.1
-ib-backend  |   Downloaded quote v1.0.40
-ib-backend  |   Downloaded zstd v0.13.3
-ib-backend  |   Downloaded icu_normalizer_data v1.5.0
-ib-backend  |   Downloaded tinystr v0.7.6
-ib-backend  |   Downloaded event-listener v5.4.0
-ib-backend  |   Downloaded ryu v1.0.20
-ib-backend  |   Downloaded lazy_static v1.5.0
-ib-backend  |   Downloaded rustc_version v0.4.1
-ib-backend  |   Downloaded impl-more v0.1.9
-ib-backend  |   Downloaded base64 v0.22.1
-ib-backend  |   Downloaded idna_adapter v1.2.0
-ib-backend  |   Downloaded hyper-util v0.1.10
-ib-backend  |   Downloaded sqlx-macros-core v0.8.3
-ib-backend  |   Downloaded spin v0.9.8
-ib-backend  |   Downloaded rustls-pki-types v1.11.0
-ib-backend  |   Downloaded tempfile v3.19.0
-ib-backend  |   Downloaded derive_more v2.0.1
-ib-backend  |   Downloaded serde v1.0.219
-ib-backend  |   Downloaded serde_derive v1.0.219
-ib-backend  |   Downloaded local-channel v0.1.5
-ib-backend  |   Downloaded mime v0.3.17
-ib-backend  |   Downloaded powerfmt v0.2.0
-ib-backend  |   Downloaded bytes v1.10.1
-frontend-1  | [4/4] Building fresh packages...
-ib-backend  |   Downloaded socket2 v0.5.8
-ib-backend  |   Downloaded parking v2.2.1
-ib-backend  |   Downloaded sqlx-mysql v0.8.3
-ib-backend  |   Downloaded futures-intrusive v0.5.0
-ib-backend  |   Downloaded percent-encoding v2.3.1
-ib-backend  |   Downloaded time-macros v0.2.20
-ib-backend  |   Downloaded http v1.3.1
-ib-backend  |   Downloaded pin-utils v0.1.0
-ib-backend  |   Downloaded num-iter v0.1.45
-ib-backend  |   Downloaded http v0.2.12
-ib-backend  |   Downloaded thiserror v2.0.12
-ib-backend  |   Downloaded sqlx-sqlite v0.8.3
-ib-backend  |   Downloaded rand v0.9.0
-ib-backend  |   Downloaded rsa v0.9.8
-ib-backend  |   Downloaded rand v0.8.5
-ib-backend  |   Downloaded tracing-attributes v0.1.28
-ib-backend  |   Downloaded tokio-rustls v0.26.2
-ib-backend  |   Downloaded openssl-probe v0.1.6
-ib-backend  |   Downloaded allocator-api2 v0.2.21
-ib-backend  |   Downloaded regex-lite v0.1.6
-ib-backend  |   Downloaded version_check v0.9.5
-ib-backend  |   Downloaded yoke v0.7.5
-ib-backend  |   Downloaded slab v0.4.9
-ib-backend  |   Downloaded flate2 v1.1.0
-frontend-1  | Done in 4.64s.
-ib-backend  |   Downloaded sha1 v0.10.6
-ib-backend  |   Downloaded actix-http v3.10.0
-ib-backend  |   Downloaded hashbrown v0.15.2
-ib-backend  |   Downloaded unicode-properties v0.1.3
-ib-backend  |   Downloaded aho-corasick v1.1.3
-ib-backend  |   Downloaded sqlx-core v0.8.3
-ib-backend  |   Downloaded h2 v0.3.26
-ib-backend  |   Downloaded sqlx-postgres v0.8.3
-ib-backend  |   Downloaded serde_json v1.0.140
-ib-backend  |   Downloaded lock_api v0.4.12
-ib-backend  |   Downloaded pin-project-lite v0.2.16
-ib-backend  |   Downloaded num-integer v0.1.46
-ib-backend  |   Downloaded brotli-decompressor v4.0.2
-ib-backend  |   Downloaded pem-rfc7468 v0.7.0
-ib-backend  |   Downloaded pkcs1 v0.7.5
-ib-backend  |   Downloaded sqlx v0.8.3
-ib-backend  |   Downloaded parking_lot_core v0.9.10
-ib-backend  |   Downloaded reqwest v0.12.14
-ib-backend  |   Downloaded rustls-webpki v0.103.0
-frontend-1  | yarn run v1.22.22
-ib-backend  |   Downloaded icu_provider v1.5.0
-ib-backend  |   Downloaded regex v1.11.1
-frontend-1  | $ vite
-ib-backend  |   Downloaded zstd-safe v7.2.3
-ib-backend  |   Downloaded tinyvec v1.9.0
-ib-backend  |   Downloaded actix-web v4.10.2
-ib-backend  |   Downloaded tokio-stream v0.1.17
-ib-backend  |   Downloaded unicode-ident v1.0.18
-ib-backend  |   Downloaded regex-syntax v0.8.5
-ib-backend  |   Downloaded chrono v0.4.40
-ib-backend  |   Downloaded pkg-config v0.3.32
-ib-backend  |   Downloaded mime_guess v2.0.5
-ib-backend  |   Downloaded log v0.4.26
-ib-backend  |   Downloaded native-tls v0.2.14
-ib-backend  |   Downloaded ipnet v2.11.0
-ib-backend  |   Downloaded hkdf v0.12.4
-ib-backend  |   Downloaded pkcs8 v0.10.2
-ib-backend  |   Downloaded num-traits v0.2.19
-ib-backend  |   Downloaded litemap v0.7.5
-ib-backend  |   Downloaded parking_lot v0.12.3
-ib-backend  |   Downloaded once_cell v1.21.1
-ib-backend  |   Downloaded unicode-bidi v0.3.18
-ib-backend  |   Downloaded regex-automata v0.4.9
-ib-backend  |   Downloaded uuid v1.16.0
-ib-backend  |   Downloaded hyper v1.6.0
-ib-backend  |   Downloaded h2 v0.4.8
-ib-backend  |   Downloaded futures-util v0.3.31
-ib-backend  |   Downloaded miniz_oxide v0.8.5
-ib-backend  |   Downloaded jobserver v0.1.32
-ib-backend  |   Downloaded signature v2.2.0
-ib-backend  |   Downloaded cc v1.2.16
-ib-backend  |   Downloaded derive_more-impl v2.0.1
-ib-backend  |   Downloaded der v0.7.9
-ib-backend  |   Downloaded itoa v1.0.15
-ib-backend  |   Downloaded icu_collections v1.5.0
-ib-backend  |   Downloaded openssl-sys v0.9.106
-ib-backend  |   Downloaded tracing-core v0.1.33
-ib-backend  |   Downloaded language-tags v0.3.2
-ib-backend  |   Downloaded typenum v1.18.0
-ib-backend  |   Downloaded tracing v0.1.41
-ib-backend  |   Downloaded httparse v1.10.1
-ib-backend  |   Downloaded url v2.5.4
-ib-backend  |   Downloaded flume v0.11.1
-ib-backend  |   Downloaded getrandom v0.3.1
-ib-backend  |   Downloaded crossbeam-utils v0.8.21
-ib-backend  |   Downloaded untrusted v0.9.0
-ib-backend  |   Downloaded unicase v2.8.1
-ib-backend  |   Downloaded hmac v0.12.1
-ib-backend  |   Downloaded bitflags v2.9.0
-ib-backend  |   Downloaded const-oid v0.9.6
-ib-backend  |   Downloaded brotli v7.0.0
-ib-backend  |   Downloaded encoding_rs v0.8.35
-ib-backend  |   Downloaded time v0.3.39
-ib-backend  |   Downloaded memchr v2.7.4
-ib-backend  |   Downloaded mio v1.0.3
-ib-backend  |   Downloaded indexmap v2.8.0
-ib-backend  |   Downloaded tower v0.5.2
-ib-backend  |   Downloaded unicode-normalization v0.1.24
-ib-backend  |   Downloaded tokio-util v0.7.14
-ib-backend  |   Downloaded zerovec v0.10.4
-ib-backend  |   Downloaded num-bigint-dig v0.8.4
-ib-backend  |   Downloaded libm v0.2.11
-ib-backend  |   Downloaded idna v1.0.3
-frontend-1  | 11:47:45 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
-frontend-1  |
-frontend-1  |   VITE v6.2.1  ready in 1256 ms
-frontend-1  |
-frontend-1  |   ➜  Local:   http://localhost:5173/
-frontend-1  |   ➜  Network: http://172.18.0.3:5173/
-ib-backend  |   Downloaded vcpkg v0.2.15
-ib-backend  |   Downloaded icu_properties_data v1.5.0
-ib-backend  |   Downloaded zerocopy v0.8.23
-ib-backend  |   Downloaded openssl v0.10.71
-ib-backend  |   Downloaded syn v2.0.100
-ib-backend  |   Downloaded rustls v0.23.24
-ib-backend  |   Downloaded rustix v1.0.2
-ib-backend  |   Downloaded zstd-sys v2.0.14+zstd.1.5.7
-ib-backend  |   Downloaded tokio v1.44.1
-ib-backend  |   Downloaded libc v0.2.171
-ib-backend  |   Downloaded ring v0.17.14
-ib-backend  |   Downloaded linux-raw-sys v0.9.3
-ib-backend  |   Downloaded libsqlite3-sys v0.30.1
-ib-backend  |    Compiling proc-macro2 v1.0.94
-ib-backend  |    Compiling unicode-ident v1.0.18
-ib-backend  |    Compiling libc v0.2.171
-ib-backend  |    Compiling cfg-if v1.0.0
-ib-backend  |    Compiling serde v1.0.219
-ib-backend  |    Compiling autocfg v1.4.0
-ib-backend  |    Compiling pin-project-lite v0.2.16
-ib-backend  |    Compiling bytes v1.10.1
-ib-backend  |    Compiling futures-core v0.3.31
-ib-backend  |    Compiling parking_lot_core v0.9.10
-ib-backend  |    Compiling log v0.4.26
-ib-backend  |    Compiling shlex v1.3.0
-ib-backend  |    Compiling once_cell v1.21.1
-ib-backend  |    Compiling scopeguard v1.2.0
-ib-backend  |    Compiling pkg-config v0.3.32
-ib-backend  |    Compiling stable_deref_trait v1.2.0
-ib-backend  |    Compiling memchr v2.7.4
-ib-backend  |    Compiling itoa v1.0.15
-ib-backend  |    Compiling version_check v0.9.5
-ib-backend  |    Compiling lock_api v0.4.12
-ib-backend  |    Compiling slab v0.4.9
-ib-backend  |    Compiling tracing-core v0.1.33
-ib-backend  |    Compiling quote v1.0.40
-ib-backend  |    Compiling litemap v0.7.5
-ib-backend  |    Compiling writeable v0.5.5
-ib-backend  |    Compiling equivalent v1.0.2
-ib-backend  |    Compiling syn v2.0.100
-ib-backend  |    Compiling allocator-api2 v0.2.21
-ib-backend  |    Compiling typenum v1.18.0
-ib-backend  |    Compiling jobserver v0.1.32
-ib-backend  |    Compiling socket2 v0.5.8
-ib-backend  |    Compiling generic-array v0.14.7
-ib-backend  |    Compiling signal-hook-registry v1.4.2
-ib-backend  |    Compiling cc v1.2.16
-ib-backend  |    Compiling mio v1.0.3
-ib-backend  |    Compiling icu_locid_transform_data v1.5.0
-ib-backend  |    Compiling futures-io v0.3.31
-ib-backend  |    Compiling futures-sink v0.3.31
-ib-backend  |    Compiling pin-utils v0.1.0
-ib-backend  |    Compiling icu_properties_data v1.5.0
-ib-backend  |    Compiling vcpkg v0.2.15
-ib-backend  |    Compiling futures-task v0.3.31
-ib-backend  |    Compiling write16 v1.0.0
-ib-backend  |    Compiling icu_normalizer_data v1.5.0
-ib-backend  |    Compiling utf8_iter v1.0.4
-ib-backend  |    Compiling utf16_iter v1.0.5
-ib-backend  |    Compiling subtle v2.6.1
-ib-backend  |    Compiling percent-encoding v2.3.1
-ib-backend  |    Compiling openssl v0.10.71
-ib-backend  |    Compiling foreign-types-shared v0.1.1
-ib-backend  |    Compiling zerocopy v0.8.23
-ib-backend  |    Compiling foldhash v0.1.5
-ib-backend  |    Compiling foreign-types v0.3.2
-ib-backend  |    Compiling hashbrown v0.15.2
-ib-backend  |    Compiling fnv v1.0.7
-ib-backend  |    Compiling futures-util v0.3.31
-ib-backend  |    Compiling native-tls v0.2.14
-ib-backend  |    Compiling cpufeatures v0.2.17
-ib-backend  |    Compiling num-traits v0.2.19
-ib-backend  |    Compiling openssl-probe v0.1.6
-ib-backend  |    Compiling crypto-common v0.1.6
-ib-backend  |    Compiling block-buffer v0.10.4
-ib-backend  |    Compiling bitflags v2.9.0
-ib-backend  |    Compiling digest v0.10.7
-ib-backend  |    Compiling getrandom v0.3.1
-ib-backend  |    Compiling indexmap v2.8.0
-ib-backend  |    Compiling serde_json v1.0.140
-ib-backend  |    Compiling crossbeam-utils v0.8.21
-ib-backend  |    Compiling ryu v1.0.20
-ib-backend  |    Compiling openssl-sys v0.9.106
-ib-backend  |    Compiling iana-time-zone v0.1.61
-ib-backend  |    Compiling httparse v1.10.1
-ib-backend  |    Compiling thiserror v2.0.12
-ib-backend  |    Compiling ppv-lite86 v0.2.21
-ib-backend  |    Compiling concurrent-queue v2.5.0
-ib-backend  |    Compiling zstd-sys v2.0.14+zstd.1.5.7
-ib-backend  |    Compiling form_urlencoded v1.2.1
-ib-backend  |    Compiling getrandom v0.2.15
-ib-backend  |    Compiling parking v2.2.1
-ib-backend  |    Compiling crc-catalog v2.4.0
-ib-backend  |    Compiling tinyvec_macros v0.1.1
-ib-backend  |    Compiling tinyvec v1.9.0
-ib-backend  |    Compiling crc v3.2.1
-ib-backend  |    Compiling event-listener v5.4.0
-ib-backend  |    Compiling rand_core v0.6.4
-ib-backend  |    Compiling crossbeam-queue v0.3.12
-ib-backend  |    Compiling http v1.3.1
-ib-backend  |    Compiling unicode-normalization v0.1.24
-ib-backend  |    Compiling synstructure v0.13.1
-ib-backend  |    Compiling tokio v1.44.1
-ib-backend  |    Compiling rand_chacha v0.3.1
-ib-backend  |    Compiling hmac v0.12.1
-ib-backend  |    Compiling futures-channel v0.3.31
-ib-backend  |    Compiling bytestring v1.4.0
-ib-backend  |    Compiling rustix v1.0.2
-ib-backend  |    Compiling zstd-safe v7.2.3
-ib-backend  |    Compiling local-waker v0.1.4
-ib-backend  |    Compiling alloc-no-stdlib v2.0.4
-ib-backend  |    Compiling unicode-properties v0.1.3
-ib-backend  |    Compiling base64 v0.22.1
-ib-backend  |    Compiling unicode-bidi v0.3.18
-ib-backend  |    Compiling alloc-stdlib v0.2.2
-ib-backend  |    Compiling hkdf v0.12.4
-ib-backend  |    Compiling http-body v1.0.1
-ib-backend  |    Compiling rand v0.8.5
-ib-backend  |    Compiling hashlink v0.10.0
-ib-backend  |    Compiling stringprep v0.1.5
-ib-backend  |    Compiling chrono v0.4.40
-ib-backend  |    Compiling atoi v2.0.0
-ib-backend  |    Compiling rand_core v0.9.3
-ib-backend  |    Compiling sha2 v0.10.8
-ib-backend  |    Compiling md-5 v0.10.6
-ib-backend  |    Compiling http v0.2.12
-ib-backend  |    Compiling aho-corasick v1.1.3
-ib-backend  |    Compiling serde_derive v1.0.219
-ib-backend  |    Compiling zerofrom-derive v0.1.6
-ib-backend  |    Compiling yoke-derive v0.7.5
-ib-backend  |    Compiling zerovec-derive v0.10.3
-ib-backend  |    Compiling displaydoc v0.2.5
-ib-backend  |    Compiling zerofrom v0.1.6
-ib-backend  |    Compiling tracing-attributes v0.1.28
-ib-backend  |    Compiling icu_provider_macros v1.5.0
-ib-backend  |    Compiling yoke v0.7.5
-ib-backend  |    Compiling tokio-macros v2.5.0
-ib-backend  |    Compiling zerovec v0.10.4
-ib-backend  |    Compiling openssl-macros v0.1.1
-ib-backend  |    Compiling thiserror-impl v2.0.12
-ib-backend  |    Compiling tokio-stream v0.1.17
-ib-backend  |    Compiling tinystr v0.7.6
-ib-backend  |    Compiling icu_collections v1.5.0
-ib-backend  |    Compiling tracing v0.1.41
-ib-backend  |    Compiling icu_locid v1.5.0
-ib-backend  |    Compiling atomic-waker v1.1.2
-ib-backend  |    Compiling regex-lite v0.1.6
-ib-backend  |    Compiling icu_provider v1.5.0
-ib-backend  |    Compiling icu_locid_transform v1.5.0
-ib-backend  |    Compiling uuid v1.16.0
-ib-backend  |    Compiling num-conv v0.1.0
-ib-backend  |    Compiling home v0.5.11
-ib-backend  |    Compiling adler2 v2.0.0
-ib-backend  |    Compiling powerfmt v0.2.0
-ib-backend  |    Compiling dotenvy v0.15.7
-ib-backend  |    Compiling linux-raw-sys v0.9.3
-ib-backend  |    Compiling try-lock v0.2.5
-ib-backend  |    Compiling hex v0.4.3
-ib-backend  |    Compiling icu_properties v1.5.1
-ib-backend  |    Compiling byteorder v1.5.0
-ib-backend  |    Compiling mime v0.3.17
-ib-backend  |    Compiling time-core v0.1.3
-ib-backend  |    Compiling whoami v1.5.2
-ib-backend  |    Compiling regex-syntax v0.8.5
-ib-backend  |    Compiling smallvec v1.14.0
-ib-backend  |    Compiling parking_lot v0.12.3
-ib-backend  |    Compiling either v1.15.0
-ib-backend  |    Compiling icu_normalizer v1.5.0
-ib-backend  |    Compiling futures-intrusive v0.5.0
-ib-backend  |    Compiling idna_adapter v1.2.0
-ib-backend  |    Compiling idna v1.0.3
-ib-backend  |    Compiling unicode-xid v0.2.6
-ib-backend  |    Compiling derive_more-impl v2.0.1
-ib-backend  |    Compiling url v2.5.4
-ib-backend  |    Compiling regex-automata v0.4.9
-ib-backend  |    Compiling sqlx-core v0.8.3
-ib-backend  |    Compiling time-macros v0.2.20
-ib-backend  |    Compiling want v0.3.1
-ib-backend  |    Compiling deranged v0.3.11
-ib-backend  |    Compiling miniz_oxide v0.8.5
-ib-backend  |    Compiling tokio-util v0.7.14
-ib-backend  |    Compiling actix-rt v2.10.0
-ib-backend  |    Compiling rand_chacha v0.9.0
-ib-backend  |    Compiling h2 v0.4.8
-ib-backend  |    Compiling brotli-decompressor v4.0.2
-ib-backend  |    Compiling actix-utils v3.0.1
-ib-backend  |    Compiling cookie v0.16.2
-ib-backend  |    Compiling actix-service v2.0.3
-ib-backend  |    Compiling crc32fast v1.4.2
-ib-backend  |    Compiling encoding_rs v0.8.35
-ib-backend  |    Compiling fastrand v2.3.0
-ib-backend  |    Compiling tower-service v0.3.3
-ib-backend  |    Compiling unicase v2.8.1
-ib-backend  |    Compiling tempfile v3.19.0
-ib-backend  |    Compiling zstd v0.13.3
-ib-backend  |    Compiling mime_guess v2.0.5
-ib-backend  |    Compiling sqlx-postgres v0.8.3
-ib-backend  |    Compiling flate2 v1.1.0
-ib-backend  |    Compiling brotli v7.0.0
-ib-backend  |    Compiling derive_more v2.0.1
-ib-backend  |    Compiling h2 v0.3.26
-ib-backend  |    Compiling actix-codec v0.5.2
-ib-backend  |    Compiling rand v0.9.0
-ib-backend  |    Compiling regex v1.11.1
-ib-backend  |    Compiling time v0.3.39
-ib-backend  |    Compiling actix-router v0.5.3
-ib-backend  |    Compiling serde_urlencoded v0.7.1
-ib-backend  |    Compiling local-channel v0.1.5
-ib-backend  |    Compiling sha1 v0.10.6
-ib-backend  |    Compiling hyper v1.6.0
-ib-backend  |    Compiling httpdate v1.0.3
-ib-backend  |    Compiling heck v0.5.0
-ib-backend  |    Compiling language-tags v0.3.2
-ib-backend  |    Compiling sqlx-macros-core v0.8.3
-ib-backend  |    Compiling hyper-util v0.1.10
-ib-backend  |    Compiling actix-http v3.10.0
-ib-backend  |    Compiling actix-web-codegen v4.3.0
-ib-backend  |    Compiling actix-server v2.5.1
-ib-backend  |    Compiling tokio-native-tls v0.3.1
-ib-backend  |    Compiling actix-macros v0.2.4
-ib-backend  |    Compiling http-body-util v0.1.3
-ib-backend  |    Compiling sync_wrapper v1.0.2
-ib-backend  |    Compiling rustls-pki-types v1.11.0
-ib-backend  |    Compiling tower-layer v0.3.3
-ib-backend  |    Compiling impl-more v0.1.9
-db          | 2025-03-17 11:48:58.169 UTC [69] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.169 UTC [69] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.183 UTC [70] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.183 UTC [70] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.193 UTC [71] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.193 UTC [71] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.220 UTC [72] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.220 UTC [72] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-ib-backend  |    Compiling convert_case v0.4.0
-db          | 2025-03-17 11:48:58.231 UTC [74] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.231 UTC [74] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.234 UTC [73] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.234 UTC [73] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.272 UTC [75] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.272 UTC [75] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.274 UTC [76] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.274 UTC [76] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.284 UTC [77] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.284 UTC [77] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.288 UTC [78] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.288 UTC [78] DETAIL:  Role "neville-inkblink" does not exist.
-ib-backend  |    Compiling hyper-tls v0.6.0
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.300 UTC [79] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.300 UTC [79] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.306 UTC [80] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.306 UTC [80] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.314 UTC [81] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.314 UTC [81] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.322 UTC [82] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.322 UTC [82] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.327 UTC [83] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.327 UTC [83] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.331 UTC [84] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.331 UTC [84] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.340 UTC [85] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.340 UTC [85] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.343 UTC [86] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.343 UTC [86] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.357 UTC [87] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.357 UTC [87] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.369 UTC [88] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.369 UTC [88] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.371 UTC [89] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.371 UTC [89] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.389 UTC [90] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.389 UTC [90] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.398 UTC [91] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.398 UTC [91] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.404 UTC [92] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.404 UTC [92] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.408 UTC [93] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.408 UTC [93] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.416 UTC [94] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.416 UTC [94] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.424 UTC [95] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.424 UTC [95] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.428 UTC [96] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.428 UTC [96] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.441 UTC [98] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.441 UTC [98] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.446 UTC [97] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.446 UTC [97] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.456 UTC [99] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.456 UTC [99] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.461 UTC [100] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.461 UTC [100] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.469 UTC [101] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.469 UTC [101] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.471 UTC [102] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.471 UTC [102] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.478 UTC [104] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.478 UTC [104] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:48:58.481 UTC [103] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.481 UTC [103] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-ib-backend  |    Compiling tower v0.5.2
-ib-backend  |    Compiling actix-web v4.10.2
-ib-backend  |    Compiling derive_more v0.99.19
-ib-backend  |    Compiling rustls-pemfile v2.2.0
-ib-backend  |    Compiling ipnet v2.11.0
-ib-backend  |    Compiling sqlx-macros v0.8.3
-ib-backend  |    Compiling reqwest v0.12.14
-ib-backend  |    Compiling actix-cors v0.6.5
-ib-backend  |    Compiling sqlx v0.8.3
-ib-backend  |    Compiling ib-backend v0.1.0 (/app)
-ib-backend  | error: relative URL without a base
-ib-backend  |   --> src/handlers.rs:13:18
-ib-backend  |    |
-ib-backend  | 13 |       let result = sqlx::query_as!(
-ib-backend  |    |  __________________^
-ib-backend  | 14 | |         User,
-ib-backend  | 15 | |         "INSERT INTO users (email, username) VALUES ($1, $2) RETURNING id, email, username, inkbucks, created_at",
-ib-backend  | 16 | |         user.email,
-ib-backend  | 17 | |         user.username
-ib-backend  | 18 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |   --> src/handlers.rs:29:18
-ib-backend  |    |
-ib-backend  | 29 |       let result = sqlx::query_as!(
-ib-backend  |    |  __________________^
-ib-backend  | 30 | |         User,
-ib-backend  | 31 | |         "SELECT id, email, username, inkbucks, created_at FROM users"
-ib-backend  | 32 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |   --> src/handlers.rs:44:18
-ib-backend  |    |
-ib-backend  | 44 |       let result = sqlx::query_as!(
-ib-backend  |    |  __________________^
-ib-backend  | 45 | |         User,
-ib-backend  | 46 | |         "SELECT id, email, username, inkbucks, created_at FROM users WHERE id = $1",
-ib-backend  | 47 | |         user_id
-ib-backend  | 48 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |   --> src/handlers.rs:66:18
-ib-backend  |    |
-ib-backend  | 66 |       let result = sqlx::query!(
-ib-backend  |    |  __________________^
-ib-backend  | 67 | |         "UPDATE users SET email = COALESCE($1, email), username = COALESCE($2, username), inkbucks = COALESCE($3, inkbucks) WHERE id = $4",
-ib-backend  | 68 | |         update.email,
-ib-backend  | 69 | |         update.username,
-ib-backend  | 70 | |         update.inkbucks,
-ib-backend  | 71 | |         user_id
-ib-backend  | 72 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |   --> src/handlers.rs:85:18
-ib-backend  |    |
-ib-backend  | 85 |     let result = sqlx::query!("DELETE FROM users WHERE id = $1", user_id)
-ib-backend  |    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:99:18
-ib-backend  |     |
-ib-backend  | 99  |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 100 | |         IconPack,
-ib-backend  | 101 | |         "INSERT INTO icon_packs (user_id, name) VALUES ($1, $2) RETURNING id, user_id, name, created_at",
-ib-backend  | 102 | |         pack.user_id,
-ib-backend  | 103 | |         pack.name
-ib-backend  | 104 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:115:18
-ib-backend  |     |
-ib-backend  | 115 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 116 | |         IconPack,
-ib-backend  | 117 | |         "SELECT id, user_id, name, created_at FROM icon_packs"
-ib-backend  | 118 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:130:18
-ib-backend  |     |
-ib-backend  | 130 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 131 | |         IconPack,
-ib-backend  | 132 | |         "SELECT id, user_id, name, created_at FROM icon_packs WHERE id = $1",
-ib-backend  | 133 | |         pack_id
-ib-backend  | 134 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:152:18
-ib-backend  |     |
-ib-backend  | 152 |       let result = sqlx::query!(
-ib-backend  |     |  __________________^
-ib-backend  | 153 | |         "UPDATE icon_packs SET name = COALESCE($1, name) WHERE id = $2",
-ib-backend  | 154 | |         update.name,
-ib-backend  | 155 | |         pack_id
-ib-backend  | 156 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:169:18
-ib-backend  |     |
-ib-backend  | 169 |     let result = sqlx::query!("DELETE FROM icon_packs WHERE id = $1", pack_id)
-ib-backend  |     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:183:18
-ib-backend  |     |
-ib-backend  | 183 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 184 | |         Icon,
-ib-backend  | 185 | |         "SELECT id, user_id, icon_pack_id, image_url, metadata, created_at FROM icons"
-ib-backend  | 186 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:238:26
-ib-backend  |     |
-ib-backend  | 238 |               let result = sqlx::query_as!(
-ib-backend  |     |  __________________________^
-ib-backend  | 239 | |                 Icon,
-ib-backend  | 240 | |                 "INSERT INTO icons (user_id, icon_pack_id, image_url, metadata, image_data)
-ib-backend  | 241 | |                  VALUES ($1, $2, $3, $4, $5)
-ib-backend  | ...   |
-ib-backend  | 247 | |                 &image_data
-ib-backend  | 248 | |             )
-ib-backend  |     | |_____________^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:264:11
-ib-backend  |     |
-ib-backend  | 264 |     match sqlx::query!("SELECT image_data FROM icons WHERE id = $1", icon_id)
-ib-backend  |     |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:280:18
-ib-backend  |     |
-ib-backend  | 280 |     let result = sqlx::query!("DELETE FROM icons WHERE id = $1", icon_id)
-ib-backend  |     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:294:18
-ib-backend  |     |
-ib-backend  | 294 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 295 | |         Transaction,
-ib-backend  | 296 | |         "INSERT INTO transactions (user_id, type, icon_id, amount) VALUES ($1, $2, $3, $4) RETURNING id, user_id, type AS \"type_: Transa...
-ib-backend  | 297 | |         tx.user_id,
-ib-backend  | ...   |
-ib-backend  | 300 | |         tx.amount
-ib-backend  | 301 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:312:18
-ib-backend  |     |
-ib-backend  | 312 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 313 | |         Transaction,
-ib-backend  | 314 | |         "SELECT id, user_id, type AS \"type_: TransactionType\", icon_id, amount, created_at FROM transactions"
-ib-backend  | 315 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:327:18
-ib-backend  |     |
-ib-backend  | 327 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 328 | |         Transaction,
-ib-backend  | 329 | |         "SELECT id, user_id, type AS \"type_: TransactionType\", icon_id, amount, created_at FROM transactions WHERE id = $1",
-ib-backend  | 330 | |         tx_id
-ib-backend  | 331 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: relative URL without a base
-ib-backend  |    --> src/handlers.rs:353:18
-ib-backend  |     |
-ib-backend  | 353 |     let result = sqlx::query!("DELETE FROM transactions WHERE id = $1", tx_id)
-ib-backend  |     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | warning: unused variable: `pool`
-ib-backend  |    --> src/handlers.rs:344:5
-ib-backend  |     |
-ib-backend  | 344 |     pool: web::Data<PgPool>,
-ib-backend  |     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_pool`
-ib-backend  |     |
-ib-backend  |     = note: `#[warn(unused_variables)]` on by default
-ib-backend  |
-ib-backend  | warning: unused variable: `path`
-ib-backend  |    --> src/handlers.rs:345:5
-ib-backend  |     |
-ib-backend  | 345 |     path: web::Path<Uuid>,
-ib-backend  |     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_path`
-ib-backend  |
-ib-backend  | warning: `ib-backend` (bin "ib-backend") generated 2 warnings
-ib-backend  | error: could not compile `ib-backend` (bin "ib-backend") due to 18 previous errors; 2 warnings emitted
-ib-backend exited with code 101
-db          | 2025-03-17 11:49:20.700 UTC [105] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.700 UTC [105] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.711 UTC [106] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.711 UTC [106] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.719 UTC [107] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.719 UTC [107] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.727 UTC [108] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.727 UTC [108] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.740 UTC [109] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.740 UTC [109] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.749 UTC [110] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.749 UTC [110] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.756 UTC [111] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.756 UTC [111] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.765 UTC [112] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.765 UTC [112] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.781 UTC [113] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.781 UTC [113] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.789 UTC [114] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.789 UTC [114] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.800 UTC [115] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.800 UTC [115] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.817 UTC [116] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.817 UTC [116] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.824 UTC [117] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.824 UTC [117] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.838 UTC [118] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.838 UTC [118] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.851 UTC [119] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.851 UTC [119] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.861 UTC [120] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.861 UTC [120] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.872 UTC [121] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.872 UTC [121] DETAIL:  Role "neville-inkblink" does not exist.
-db          |   Connection matched pg_hba.conf line 99: "host all all all md5"
-db          | 2025-03-17 11:49:20.884 UTC [122] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:49:20.884 UTC [122] DETAIL:  Role "neville-inkblink" does not exist.
-
-What can I do so that all containers run properly and that the DB is connected accordingly.
-
-# OUTPUT 588f6fbe-fbdc-4531-b18c-da74919fa8e8
-From your logs, I see two major issues affecting your setup:
-
-### **Issue 1: Database Authentication Fails (`Role "neville-inkblink" does not exist`)**
-#### **Cause:**
-Your **PostgreSQL container is currently expecting a different username and database than what your backend is connecting to.**  
-
-In your `.env` file, you have:
-```
-POSTGRES_USER=myuser
-POSTGRES_PASSWORD=mypassword
-POSTGRES_DB=mydb
+const [selectedPlatform, setSelectedPlatform] = useState(socialPlatforms[0]);
 ```
 
-But your logs show:
-```
-db          | 2025-03-17 11:48:58.169 UTC [69] FATAL:  password authentication failed for user "neville-inkblink"
-db          | 2025-03-17 11:48:58.169 UTC [69] DETAIL:  Role "neville-inkblink" does not exist.
-```
-This error means your backend is trying to connect using the **user `neville-inkblink`**, but **your PostgreSQL instance only has `myuser`**.
-
-#### **Solution:**
-Ensure your `DATABASE_URL` matches your PostgreSQL environment variables correctly.
-
-1. **Open `.env` and update `DATABASE_URL` to use the correct user and password:**
-   ```
-   DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
-   ```
-
-2. **Check if the backend container is overriding environment variables.**
-   - In `docker-compose.dev.yml`, your backend is using:
-     ```yaml
-     build: 
-       context: ./ib-backend
-       dockerfile: Dockerfile
-       args:
-         - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-     ```
-   - This hardcodes the database connection URL **inside the Docker build step**, overriding your `.env`.
-
-   **Fix:** Pass the correct `DATABASE_URL` via environment variables instead:
-
-   ```yaml
-   backend:
-     container_name: ib-backend
-     build:
-       context: ./ib-backend
-       dockerfile: Dockerfile
-     environment:
-       - DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
-     ports:
-       - "8080:8080"
-     depends_on:
-       - db
-   ```
-
-3. **Restart all containers** to apply these changes:
-   ```sh
-   docker compose -f docker-compose.dev.yml down -v
-   docker compose -f docker-compose.dev.yml up --build
-   ```
-
----
-
-### **Issue 2: `relative URL without a base` when using `sqlx::query_as!`**
-This SQLX error means your database compilation is failing **because `sqlx` needs database connectivity at compile time.**
-
-#### **Solution:**
-**Add `SQLX_OFFLINE=true` before building Rust** to disable live DB checks:
-Modify your `Dockerfile` inside `/ib-backend`:
-
-```Dockerfile
-# Build stage
-FROM rust as builder
-WORKDIR /app
-
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
-# Disable live SQLX checks to prevent "relative URL without a base"
-ENV SQLX_OFFLINE=true
-
-COPY . .
-
-CMD ["cargo", "run"]
+🧠 Helper to find full object based on value:
+```tsx
+const handlePlatformChange = (value: string) => {
+  const platform = socialPlatforms.find((p) => p.value === value);
+  if (platform) setSelectedPlatform(platform);
+};
 ```
 
-**Then rebuild your backend:**
-```sh
-docker compose -f docker-compose.dev.yml up --build
+👉 Update the UI inside return:
+
+Replace your current platform selector div with:
+
+```tsx
+<div className="w-full sm:w-[180px]">
+  <Select onValueChange={handlePlatformChange} defaultValue={selectedPlatform.value}>
+    <SelectTrigger className="w-full bg-primary/30 text-primary border-none shadow-md rounded-full px-4 py-2">
+      <div className="flex items-center gap-2">
+        {selectedPlatform.icon}
+        <SelectValue placeholder="Select platform" />
+      </div>
+    </SelectTrigger>
+    <SelectContent className="bg-white">
+      {socialPlatforms.map((platform) => (
+        <SelectItem
+          key={platform.value}
+          value={platform.value}
+          className="flex items-center gap-2"
+        >
+          <div className="flex items-center gap-2">
+            {platform.icon}
+            {platform.name}
+          </div>
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+</div>
 ```
 
----
+📦 Tailor styles as needed to match your theme.
 
-### **Final Checklist**
-✅ `DATABASE_URL` in `.env` must match the actual PostgreSQL user & database.  
-✅ `docker-compose.dev.yml` should **not** override `DATABASE_URL` in the build step.  
-✅ The `ENV SQLX_OFFLINE=true` variable should be added to Rust's Dockerfile to disable live DB checks.  
-✅ Re-run `docker compose -f docker-compose.dev.yml down -v && docker compose -f docker-compose.dev.yml up --build`.  
+✅ Now, when the user selects a platform:
 
----
+- The icon and name inside the Select change.
+- You track the selected platform (name, icon) via state and can use it elsewhere (like Post button context etc).
 
-🎉 **With these fixes, your backend should correctly connect to the database and compile without errors.**
-# PROMPT 2ebc298d-d167-48f3-8e5c-38ab92f5b3c1
+Let me know if you'd like to persist selection via localStorage or URL params — happy to help!
+# PROMPT a3d95f68-60aa-4925-8528-2a64d1519c62
 
 
-I did all the changes, what could the error be?
+Don't use shadcn, instead implement the structure ourselves.
 
-     | The files belonging to this database system will be owned by user "postgres".
-db          | This user must also own the server process.
-db          |
-db          | The database cluster will be initialized with locale "en_US.utf8".
-db          | The default database encoding has accordingly been set to "UTF8".
-db          | The default text search configuration will be set to "english".
-db          |
-db          | Data page checksums are disabled.
-db          |
-db          | fixing permissions on existing directory /var/lib/postgresql/data ... ok
-db          | creating subdirectories ... ok
-db          | selecting dynamic shared memory implementation ... posix
-db          | selecting default max_connections ... 100
-db          | selecting default shared_buffers ... 128MB
-db          | selecting default time zone ... Etc/UTC
-db          | creating configuration files ... ok
-frontend-1  | yarn install v1.22.22
-frontend-1  | warning package-lock.json found. Your project contains lock files generated by tools other than Yarn. It is advised not to mix package managers in order to avoid resolution inconsistencies caused by unsynchronized lock files. To clear this warning, remove package-lock.json.
-frontend-1  | [1/4] Resolving packages...
-ib-backend  |     Updating crates.io index
-db          | running bootstrap script ... ok
-frontend-1  | [2/4] Fetching packages...
-frontend-1  | [3/4] Linking dependencies...
-db          | performing post-bootstrap initialization ... ok
-db          | syncing data to disk ... ok
-db          |
-db          |
-db          | Success. You can now start the database server using:
-db          |
-db          |     pg_ctl -D /var/lib/postgresql/data -l logfile start
-db          |
-db          | initdb: warning: enabling "trust" authentication for local connections
-db          | You can change this by editing pg_hba.conf or using the option -A, or
-db          | --auth-local and --auth-host, the next time you run initdb.
-ib-backend  |      Locking 319 packages to latest compatible versions
-ib-backend  |       Adding actix-cors v0.6.5 (available: v0.7.1)
-db          | waiting for server to start....2025-03-17 11:59:01.697 UTC [49] LOG:  starting PostgreSQL 13.20 (Debian 13.20-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
-db          | 2025-03-17 11:59:01.703 UTC [49] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-db          | 2025-03-17 11:59:01.715 UTC [50] LOG:  database system was shut down at 2025-03-17 11:58:59 UTC
-db          | 2025-03-17 11:59:01.729 UTC [49] LOG:  database system is ready to accept connections
-db          |  done
-db          | server started
-ib-backend  |  Downloading crates ...
-frontend-1  | [4/4] Building fresh packages...
-ib-backend  |   Downloaded actix-codec v0.5.2
-ib-backend  |   Downloaded actix-macros v0.2.4
-ib-backend  |   Downloaded actix-cors v0.6.5
-ib-backend  |   Downloaded atoi v2.0.0
-ib-backend  |   Downloaded tower-layer v0.3.3
-ib-backend  |   Downloaded equivalent v1.0.2
-ib-backend  |   Downloaded tokio-rustls v0.26.2
-ib-backend  |   Downloaded tower-service v0.3.3
-ib-backend  |   Downloaded tokio-stream v0.1.17
-ib-backend  |   Downloaded foreign-types-shared v0.1.1
-ib-backend  |   Downloaded http-body v1.0.1
-ib-backend  |   Downloaded foreign-types v0.3.2
-ib-backend  |   Downloaded crypto-common v0.1.6
-ib-backend  |   Downloaded cfg-if v1.0.0
-ib-backend  |   Downloaded bytestring v1.4.0
-ib-backend  |   Downloaded hex v0.4.3
-ib-backend  |   Downloaded adler2 v2.0.0
-ib-backend  |   Downloaded try-lock v0.2.5
-ib-backend  |   Downloaded either v1.15.0
-frontend-1  | Done in 3.95s.
-ib-backend  |   Downloaded errno v0.3.10
-ib-backend  |   Downloaded want v0.3.1
-ib-backend  |   Downloaded futures-executor v0.3.31
-ib-backend  |   Downloaded zerofrom v0.1.6
-ib-backend  |   Downloaded yoke-derive v0.7.5
-ib-backend  |   Downloaded untrusted v0.9.0
-ib-backend  |   Downloaded write16 v1.0.0
-ib-backend  |   Downloaded icu_provider_macros v1.5.0
-ib-backend  |   Downloaded futures-channel v0.3.31
-ib-backend  |   Downloaded http-body-util v0.1.3
-ib-backend  |   Downloaded num-conv v0.1.0
-ib-backend  |   Downloaded crc32fast v1.4.2
-ib-backend  |   Downloaded base64ct v1.7.3
-ib-backend  |   Downloaded openssl-probe v0.1.6
-ib-backend  |   Downloaded openssl-macros v0.1.1
-ib-backend  |   Downloaded rustls-pemfile v2.2.0
-ib-backend  |   Downloaded local-waker v0.1.4
-ib-backend  |   Downloaded cookie v0.16.2
-ib-backend  |   Downloaded sync_wrapper v1.0.2
-ib-backend  |   Downloaded getrandom v0.3.1
-ib-backend  |   Downloaded tinystr v0.7.6
-ib-backend  |   Downloaded icu_normalizer_data v1.5.0
-ib-backend  |   Downloaded subtle v2.6.1
-ib-backend  |   Downloaded icu_locid_transform_data v1.5.0
-ib-backend  |   Downloaded unicode-xid v0.2.6
-ib-backend  |   Downloaded tokio-native-tls v0.3.1
-ib-backend  |   Downloaded derive_more-impl v2.0.1
-ib-backend  |   Downloaded time-core v0.1.3
-ib-backend  |   Downloaded icu_collections v1.5.0
-ib-backend  |   Downloaded tempfile v3.19.0
-ib-backend  |   Downloaded sqlx-macros v0.8.3
-ib-backend  |   Downloaded semver v1.0.26
-ib-backend  |   Downloaded sqlx-macros-core v0.8.3
-ib-backend  |   Downloaded socket2 v0.5.8
-ib-backend  |   Downloaded pin-utils v0.1.0
-ib-backend  |   Downloaded tinyvec v1.9.0
-ib-backend  |   Downloaded rand_chacha v0.3.1
-ib-backend  |   Downloaded futures-util v0.3.31
-ib-backend  |   Downloaded serde v1.0.219
-ib-backend  |   Downloaded sqlx-mysql v0.8.3
-ib-backend  |   Downloaded time v0.3.39
-ib-backend  |   Downloaded sha1 v0.10.6
-ib-backend  |   Downloaded serde_json v1.0.140
-ib-backend  |   Downloaded actix-web v4.10.2
-frontend-1  | yarn run v1.22.22
-ib-backend  |   Downloaded ipnet v2.11.0
-ib-backend  |   Downloaded sqlx v0.8.3
-frontend-1  | $ vite
-ib-backend  |   Downloaded slab v0.4.9
-ib-backend  |   Downloaded tracing-attributes v0.1.28
-ib-backend  |   Downloaded mime_guess v2.0.5
-ib-backend  |   Downloaded lock_api v0.4.12
-ib-backend  |   Downloaded litemap v0.7.5
-ib-backend  |   Downloaded pem-rfc7468 v0.7.0
-ib-backend  |   Downloaded rustls v0.23.24
-ib-backend  |   Downloaded regex-syntax v0.8.5
-ib-backend  |   Downloaded jobserver v0.1.32
-ib-backend  |   Downloaded unicode-ident v1.0.18
-ib-backend  |   Downloaded rustix v1.0.2
-ib-backend  |   Downloaded time-macros v0.2.20
-ib-backend  |   Downloaded uuid v1.16.0
-ib-backend  |   Downloaded icu_provider v1.5.0
-ib-backend  |   Downloaded unicode-bidi v0.3.18
-ib-backend  |   Downloaded miniz_oxide v0.8.5
-ib-backend  |   Downloaded rustls-pki-types v1.11.0
-ib-backend  |   Downloaded regex-automata v0.4.9
-db          | CREATE DATABASE
-db          |
-db          |
-db          | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
-db          |
-db          | 2025-03-17 11:59:03.050 UTC [49] LOG:  received fast shutdown request
-db          | waiting for server to shut down....2025-03-17 11:59:03.053 UTC [49] LOG:  aborting any active transactions
-ib-backend  |   Downloaded rand v0.9.0
-db          | 2025-03-17 11:59:03.063 UTC [49] LOG:  background worker "logical replication launcher" (PID 56) exited with exit code 1
-ib-backend  |   Downloaded url v2.5.4
-db          | 2025-03-17 11:59:03.077 UTC [51] LOG:  shutting down
-ib-backend  |   Downloaded indexmap v2.8.0
-ib-backend  |   Downloaded mio v1.0.3
-ib-backend  |   Downloaded tower v0.5.2
-db          | 2025-03-17 11:59:03.120 UTC [49] LOG:  database system is shut down
-db          |  done
-db          | server stopped
-db          |
-db          | PostgreSQL init process complete; ready for start up.
-db          |
-ib-backend  |   Downloaded memchr v2.7.4
-ib-backend  |   Downloaded sqlx-core v0.8.3
-db          | 2025-03-17 11:59:03.200 UTC [1] LOG:  starting PostgreSQL 13.20 (Debian 13.20-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
-db          | 2025-03-17 11:59:03.200 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-ib-backend  |   Downloaded libm v0.2.11
-db          | 2025-03-17 11:59:03.200 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-db          | 2025-03-17 11:59:03.209 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-db          | 2025-03-17 11:59:03.220 UTC [64] LOG:  database system was shut down at 2025-03-17 11:59:03 UTC
-db          | 2025-03-17 11:59:03.238 UTC [1] LOG:  database system is ready to accept connections
-ib-backend  |   Downloaded num-bigint-dig v0.8.4
-ib-backend  |   Downloaded idna v1.0.3
-ib-backend  |   Downloaded zerovec v0.10.4
-ib-backend  |   Downloaded unicode-normalization v0.1.24
-ib-backend  |   Downloaded tokio-util v0.7.14
-ib-backend  |   Downloaded rand v0.8.5
-ib-backend  |   Downloaded openssl-sys v0.9.106
-ib-backend  |   Downloaded typenum v1.18.0
-ib-backend  |   Downloaded tokio v1.44.1
-ib-backend  |   Downloaded icu_properties_data v1.5.0
-ib-backend  |   Downloaded regex v1.11.1
-ib-backend  |   Downloaded vcpkg v0.2.15
-ib-backend  |   Downloaded openssl v0.10.71
-ib-backend  |   Downloaded zerocopy v0.8.23
-ib-backend  |   Downloaded tracing v0.1.41
-ib-backend  |   Downloaded tracing-core v0.1.33
-ib-backend  |   Downloaded icu_properties v1.5.1
-ib-backend  |   Downloaded smallvec v1.14.0
-ib-backend  |   Downloaded quote v1.0.40
-ib-backend  |   Downloaded proc-macro2 v1.0.94
-ib-backend  |   Downloaded parking_lot v0.12.3
-ib-backend  |   Downloaded num-traits v0.2.19
-ib-backend  |   Downloaded native-tls v0.2.14
-ib-backend  |   Downloaded log v0.4.26
-ib-backend  |   Downloaded language-tags v0.3.2
-ib-backend  |   Downloaded unicode-properties v0.1.3
-ib-backend  |   Downloaded rand_core v0.9.3
-ib-backend  |   Downloaded pkcs1 v0.7.5
-frontend-1  | 11:59:04 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
-ib-backend  |   Downloaded pin-project-lite v0.2.16
-ib-backend  |   Downloaded parking_lot_core v0.9.10
-ib-backend  |   Downloaded encoding_rs v0.8.35
-frontend-1  |
-frontend-1  |   VITE v6.2.1  ready in 1342 ms
-frontend-1  |
-frontend-1  |   ➜  Local:   http://localhost:5173/
-frontend-1  |   ➜  Network: http://172.18.0.2:5173/
-ib-backend  |   Downloaded brotli v7.0.0
-ib-backend  |   Downloaded once_cell v1.21.1
-ib-backend  |   Downloaded syn v2.0.100
-ib-backend  |   Downloaded zstd v0.13.3
-ib-backend  |   Downloaded rustls-webpki v0.103.0
-ib-backend  |   Downloaded reqwest v0.12.14
-ib-backend  |   Downloaded zstd-safe v7.2.3
-ib-backend  |   Downloaded libc v0.2.171
-ib-backend  |   Downloaded zstd-sys v2.0.14+zstd.1.5.7
-ib-backend  |   Downloaded yoke v0.7.5
-ib-backend  |   Downloaded utf16_iter v1.0.5
-ib-backend  |   Downloaded unicase v2.8.1
-ib-backend  |   Downloaded ppv-lite86 v0.2.21
-ib-backend  |   Downloaded ring v0.17.14
-ib-backend  |   Downloaded powerfmt v0.2.0
-ib-backend  |   Downloaded pkcs8 v0.10.2
-ib-backend  |   Downloaded parking v2.2.1
-ib-backend  |   Downloaded num-iter v0.1.45
-ib-backend  |   Downloaded mime v0.3.17
-ib-backend  |   Downloaded chrono v0.4.40
-ib-backend  |   Downloaded sqlx-postgres v0.8.3
-ib-backend  |   Downloaded h2 v0.3.26
-ib-backend  |   Downloaded aho-corasick v1.1.3
-ib-backend  |   Downloaded regex-lite v0.1.6
-ib-backend  |   Downloaded brotli-decompressor v4.0.2
-ib-backend  |   Downloaded rand_core v0.6.4
-ib-backend  |   Downloaded rand_chacha v0.9.0
-ib-backend  |   Downloaded percent-encoding v2.3.1
-ib-backend  |   Downloaded zerovec-derive v0.10.3
-ib-backend  |   Downloaded hyper v1.6.0
-ib-backend  |   Downloaded num-integer v0.1.46
-ib-backend  |   Downloaded md-5 v0.10.6
-ib-backend  |   Downloaded local-channel v0.1.5
-ib-backend  |   Downloaded hkdf v0.12.4
-ib-backend  |   Downloaded h2 v0.4.8
-ib-backend  |   Downloaded pkg-config v0.3.32
-ib-backend  |   Downloaded idna_adapter v1.2.0
-ib-backend  |   Downloaded zerofrom-derive v0.1.6
-ib-backend  |   Downloaded utf8_iter v1.0.4
-ib-backend  |   Downloaded spki v0.7.3
-ib-backend  |   Downloaded ryu v1.0.20
-ib-backend  |   Downloaded hashbrown v0.15.2
-ib-backend  |   Downloaded flate2 v1.1.0
-ib-backend  |   Downloaded actix-http v3.10.0
-ib-backend  |   Downloaded tinyvec_macros v0.1.1
-ib-backend  |   Downloaded sha2 v0.10.8
-ib-backend  |   Downloaded serde_urlencoded v0.7.1
-ib-backend  |   Downloaded scopeguard v1.2.0
-ib-backend  |   Downloaded rustc_version v0.4.1
-ib-backend  |   Downloaded tokio-macros v2.5.0
-ib-backend  |   Downloaded signature v2.2.0
-ib-backend  |   Downloaded signal-hook-registry v1.4.2
-ib-backend  |   Downloaded shlex v1.3.0
-ib-backend  |   Downloaded spin v0.9.8
-ib-backend  |   Downloaded sqlx-sqlite v0.8.3
-ib-backend  |   Downloaded lazy_static v1.5.0
-ib-backend  |   Downloaded itoa v1.0.15
-ib-backend  |   Downloaded zeroize v1.8.1
-ib-backend  |   Downloaded writeable v0.5.5
-ib-backend  |   Downloaded http v1.3.1
-ib-backend  |   Downloaded serde_derive v1.0.219
-ib-backend  |   Downloaded rsa v0.9.8
-ib-backend  |   Downloaded cc v1.2.16
-ib-backend  |   Downloaded http v0.2.12
-ib-backend  |   Downloaded thiserror-impl v2.0.12
-ib-backend  |   Downloaded synstructure v0.13.1
-ib-backend  |   Downloaded impl-more v0.1.9
-ib-backend  |   Downloaded whoami v1.5.2
-ib-backend  |   Downloaded version_check v0.9.5
-ib-backend  |   Downloaded futures-intrusive v0.5.0
-ib-backend  |   Downloaded der v0.7.9
-ib-backend  |   Downloaded bytes v1.10.1
-ib-backend  |   Downloaded bitflags v2.9.0
-ib-backend  |   Downloaded base64 v0.22.1
-ib-backend  |   Downloaded hyper-util v0.1.10
-ib-backend  |   Downloaded stringprep v0.1.5
-ib-backend  |   Downloaded stable_deref_trait v1.2.0
-ib-backend  |   Downloaded flume v0.11.1
-ib-backend  |   Downloaded derive_more v2.0.1
-ib-backend  |   Downloaded derive_more v0.99.19
-ib-backend  |   Downloaded allocator-api2 v0.2.21
-ib-backend  |   Downloaded icu_normalizer v1.5.0
-ib-backend  |   Downloaded icu_locid v1.5.0
-ib-backend  |   Downloaded httparse v1.10.1
-ib-backend  |   Downloaded hmac v0.12.1
-ib-backend  |   Downloaded getrandom v0.2.15
-ib-backend  |   Downloaded event-listener v5.4.0
-ib-backend  |   Downloaded crossbeam-utils v0.8.21
-ib-backend  |   Downloaded actix-server v2.5.1
-ib-backend  |   Downloaded linux-raw-sys v0.9.3
-ib-backend  |   Downloaded thiserror v2.0.12
-ib-backend  |   Downloaded iana-time-zone v0.1.61
-ib-backend  |   Downloaded icu_locid_transform v1.5.0
-ib-backend  |   Downloaded hyper-rustls v0.27.5
-ib-backend  |   Downloaded hashlink v0.10.0
-ib-backend  |   Downloaded const-oid v0.9.6
-ib-backend  |   Downloaded actix-router v0.5.3
-ib-backend  |   Downloaded actix-service v2.0.3
-ib-backend  |   Downloaded hyper-tls v0.6.0
-ib-backend  |   Downloaded httpdate v1.0.3
-ib-backend  |   Downloaded home v0.5.11
-ib-backend  |   Downloaded heck v0.5.0
-ib-backend  |   Downloaded generic-array v0.14.7
-ib-backend  |   Downloaded futures-task v0.3.31
-ib-backend  |   Downloaded form_urlencoded v1.2.1
-ib-backend  |   Downloaded foldhash v0.1.5
-ib-backend  |   Downloaded fnv v1.0.7
-ib-backend  |   Downloaded futures-sink v0.3.31
-ib-backend  |   Downloaded futures-io v0.3.31
-ib-backend  |   Downloaded futures-core v0.3.31
-ib-backend  |   Downloaded fastrand v2.3.0
-ib-backend  |   Downloaded concurrent-queue v2.5.0
-ib-backend  |   Downloaded actix-web-codegen v4.3.0
-ib-backend  |   Downloaded dotenvy v0.15.7
-ib-backend  |   Downloaded displaydoc v0.2.5
-ib-backend  |   Downloaded digest v0.10.7
-ib-backend  |   Downloaded crossbeam-queue v0.3.12
-ib-backend  |   Downloaded crc-catalog v2.4.0
-ib-backend  |   Downloaded crc v3.2.1
-ib-backend  |   Downloaded cpufeatures v0.2.17
-ib-backend  |   Downloaded convert_case v0.4.0
-ib-backend  |   Downloaded alloc-no-stdlib v2.0.4
-ib-backend  |   Downloaded block-buffer v0.10.4
-ib-backend  |   Downloaded alloc-stdlib v0.2.2
-ib-backend  |   Downloaded deranged v0.3.11
-ib-backend  |   Downloaded byteorder v1.5.0
-ib-backend  |   Downloaded autocfg v1.4.0
-ib-backend  |   Downloaded atomic-waker v1.1.2
-ib-backend  |   Downloaded actix-utils v3.0.1
-ib-backend  |   Downloaded actix-rt v2.10.0
-ib-backend  |   Downloaded libsqlite3-sys v0.30.1
-ib-backend  |    Compiling proc-macro2 v1.0.94
-ib-backend  |    Compiling unicode-ident v1.0.18
-ib-backend  |    Compiling libc v0.2.171
-ib-backend  |    Compiling cfg-if v1.0.0
-ib-backend  |    Compiling serde v1.0.219
-ib-backend  |    Compiling autocfg v1.4.0
-ib-backend  |    Compiling pin-project-lite v0.2.16
-ib-backend  |    Compiling bytes v1.10.1
-ib-backend  |    Compiling futures-core v0.3.31
-ib-backend  |    Compiling parking_lot_core v0.9.10
-ib-backend  |    Compiling log v0.4.26
-ib-backend  |    Compiling shlex v1.3.0
-ib-backend  |    Compiling scopeguard v1.2.0
-ib-backend  |    Compiling once_cell v1.21.1
-ib-backend  |    Compiling pkg-config v0.3.32
-ib-backend  |    Compiling stable_deref_trait v1.2.0
-ib-backend  |    Compiling memchr v2.7.4
-ib-backend  |    Compiling itoa v1.0.15
-ib-backend  |    Compiling version_check v0.9.5
-ib-backend  |    Compiling tracing-core v0.1.33
-ib-backend  |    Compiling lock_api v0.4.12
-ib-backend  |    Compiling slab v0.4.9
-ib-backend  |    Compiling quote v1.0.40
-ib-backend  |    Compiling typenum v1.18.0
-ib-backend  |    Compiling equivalent v1.0.2
-ib-backend  |    Compiling litemap v0.7.5
-ib-backend  |    Compiling syn v2.0.100
-ib-backend  |    Compiling writeable v0.5.5
-ib-backend  |    Compiling jobserver v0.1.32
-ib-backend  |    Compiling socket2 v0.5.8
-ib-backend  |    Compiling allocator-api2 v0.2.21
-ib-backend  |    Compiling generic-array v0.14.7
-ib-backend  |    Compiling cc v1.2.16
-ib-backend  |    Compiling signal-hook-registry v1.4.2
-ib-backend  |    Compiling mio v1.0.3
-ib-backend  |    Compiling icu_locid_transform_data v1.5.0
-ib-backend  |    Compiling futures-io v0.3.31
-ib-backend  |    Compiling pin-utils v0.1.0
-ib-backend  |    Compiling vcpkg v0.2.15
-ib-backend  |    Compiling icu_properties_data v1.5.0
-ib-backend  |    Compiling futures-task v0.3.31
-ib-backend  |    Compiling futures-sink v0.3.31
-ib-backend  |    Compiling utf16_iter v1.0.5
-ib-backend  |    Compiling utf8_iter v1.0.4
-ib-backend  |    Compiling write16 v1.0.0
-ib-backend  |    Compiling icu_normalizer_data v1.5.0
-ib-backend  |    Compiling percent-encoding v2.3.1
-ib-backend  |    Compiling subtle v2.6.1
-ib-backend  |    Compiling foldhash v0.1.5
-ib-backend  |    Compiling openssl v0.10.71
-ib-backend  |    Compiling foreign-types-shared v0.1.1
-ib-backend  |    Compiling zerocopy v0.8.23
-ib-backend  |    Compiling foreign-types v0.3.2
-ib-backend  |    Compiling hashbrown v0.15.2
-ib-backend  |    Compiling fnv v1.0.7
-ib-backend  |    Compiling futures-util v0.3.31
-ib-backend  |    Compiling native-tls v0.2.14
-ib-backend  |    Compiling crypto-common v0.1.6
-ib-backend  |    Compiling block-buffer v0.10.4
-ib-backend  |    Compiling cpufeatures v0.2.17
-ib-backend  |    Compiling num-traits v0.2.19
-ib-backend  |    Compiling digest v0.10.7
-ib-backend  |    Compiling openssl-probe v0.1.6
-ib-backend  |    Compiling crossbeam-utils v0.8.21
-ib-backend  |    Compiling serde_json v1.0.140
-ib-backend  |    Compiling indexmap v2.8.0
-ib-backend  |    Compiling ryu v1.0.20
-ib-backend  |    Compiling bitflags v2.9.0
-ib-backend  |    Compiling getrandom v0.3.1
-ib-backend  |    Compiling openssl-sys v0.9.106
-ib-backend  |    Compiling iana-time-zone v0.1.61
-ib-backend  |    Compiling thiserror v2.0.12
-ib-backend  |    Compiling httparse v1.10.1
-ib-backend  |    Compiling concurrent-queue v2.5.0
-ib-backend  |    Compiling zstd-sys v2.0.14+zstd.1.5.7
-ib-backend  |    Compiling form_urlencoded v1.2.1
-ib-backend  |    Compiling getrandom v0.2.15
-ib-backend  |    Compiling crc-catalog v2.4.0
-ib-backend  |    Compiling parking v2.2.1
-ib-backend  |    Compiling tinyvec_macros v0.1.1
-ib-backend  |    Compiling crc v3.2.1
-ib-backend  |    Compiling tinyvec v1.9.0
-ib-backend  |    Compiling event-listener v5.4.0
-ib-backend  |    Compiling synstructure v0.13.1
-ib-backend  |    Compiling ppv-lite86 v0.2.21
-ib-backend  |    Compiling rand_core v0.6.4
-ib-backend  |    Compiling crossbeam-queue v0.3.12
-ib-backend  |    Compiling http v1.3.1
-ib-backend  |    Compiling rand_chacha v0.3.1
-ib-backend  |    Compiling unicode-normalization v0.1.24
-ib-backend  |    Compiling hmac v0.12.1
-ib-backend  |    Compiling futures-channel v0.3.31
-ib-backend  |    Compiling bytestring v1.4.0
-ib-backend  |    Compiling tokio v1.44.1
-ib-backend  |    Compiling local-waker v0.1.4
-ib-backend  |    Compiling unicode-properties v0.1.3
-ib-backend  |    Compiling unicode-bidi v0.3.18
-ib-backend  |    Compiling zstd-safe v7.2.3
-ib-backend  |    Compiling alloc-no-stdlib v2.0.4
-ib-backend  |    Compiling rustix v1.0.2
-ib-backend  |    Compiling base64 v0.22.1
-ib-backend  |    Compiling stringprep v0.1.5
-ib-backend  |    Compiling alloc-stdlib v0.2.2
-ib-backend  |    Compiling http-body v1.0.1
-ib-backend  |    Compiling rand v0.8.5
-ib-backend  |    Compiling hkdf v0.12.4
-ib-backend  |    Compiling hashlink v0.10.0
-ib-backend  |    Compiling serde_derive v1.0.219
-ib-backend  |    Compiling zerofrom-derive v0.1.6
-ib-backend  |    Compiling yoke-derive v0.7.5
-ib-backend  |    Compiling zerovec-derive v0.10.3
-ib-backend  |    Compiling displaydoc v0.2.5
-ib-backend  |    Compiling tracing-attributes v0.1.28
-ib-backend  |    Compiling icu_provider_macros v1.5.0
-ib-backend  |    Compiling tokio-macros v2.5.0
-ib-backend  |    Compiling zerofrom v0.1.6
-ib-backend  |    Compiling yoke v0.7.5
-ib-backend  |    Compiling zerovec v0.10.4
-ib-backend  |    Compiling openssl-macros v0.1.1
-ib-backend  |    Compiling thiserror-impl v2.0.12
-ib-backend  |    Compiling chrono v0.4.40
-ib-backend  |    Compiling tinystr v0.7.6
-ib-backend  |    Compiling tracing v0.1.41
-ib-backend  |    Compiling icu_locid v1.5.0
-ib-backend  |    Compiling icu_collections v1.5.0
-ib-backend  |    Compiling icu_provider v1.5.0
-ib-backend  |    Compiling tokio-stream v0.1.17
-ib-backend  |    Compiling icu_locid_transform v1.5.0
-ib-backend  |    Compiling atoi v2.0.0
-ib-backend  |    Compiling rand_core v0.9.3
-ib-backend  |    Compiling sha2 v0.10.8
-ib-backend  |    Compiling md-5 v0.10.6
-ib-backend  |    Compiling http v0.2.12
-ib-backend  |    Compiling aho-corasick v1.1.3
-ib-backend  |    Compiling regex-lite v0.1.6
-ib-backend  |    Compiling icu_properties v1.5.1
-ib-backend  |    Compiling time-core v0.1.3
-ib-backend  |    Compiling adler2 v2.0.0
-ib-backend  |    Compiling uuid v1.16.0
-ib-backend  |    Compiling whoami v1.5.2
-ib-backend  |    Compiling smallvec v1.14.0
-ib-backend  |    Compiling parking_lot v0.12.3
-ib-backend  |    Compiling either v1.15.0
-ib-backend  |    Compiling icu_normalizer v1.5.0
-ib-backend  |    Compiling futures-intrusive v0.5.0
-ib-backend  |    Compiling idna_adapter v1.2.0
-ib-backend  |    Compiling byteorder v1.5.0
-ib-backend  |    Compiling idna v1.0.3
-ib-backend  |    Compiling home v0.5.11
-ib-backend  |    Compiling unicode-xid v0.2.6
-ib-backend  |    Compiling hex v0.4.3
-ib-backend  |    Compiling regex-syntax v0.8.5
-ib-backend  |    Compiling url v2.5.4
-ib-backend  |    Compiling linux-raw-sys v0.9.3
-ib-backend  |    Compiling dotenvy v0.15.7
-ib-backend  |    Compiling atomic-waker v1.1.2
-ib-backend  |    Compiling powerfmt v0.2.0
-ib-backend  |    Compiling mime v0.3.17
-ib-backend  |    Compiling try-lock v0.2.5
-ib-backend  |    Compiling num-conv v0.1.0
-ib-backend  |    Compiling want v0.3.1
-ib-backend  |    Compiling deranged v0.3.11
-ib-backend  |    Compiling sqlx-core v0.8.3
-ib-backend  |    Compiling time-macros v0.2.20
-ib-backend  |    Compiling derive_more-impl v2.0.1
-ib-backend  |    Compiling miniz_oxide v0.8.5
-ib-backend  |    Compiling regex-automata v0.4.9
-ib-backend  |    Compiling rand_chacha v0.9.0
-ib-backend  |    Compiling brotli-decompressor v4.0.2
-ib-backend  |    Compiling tokio-util v0.7.14
-ib-backend  |    Compiling actix-rt v2.10.0
-ib-backend  |    Compiling h2 v0.4.8
-ib-backend  |    Compiling actix-utils v3.0.1
-ib-backend  |    Compiling cookie v0.16.2
-ib-backend  |    Compiling actix-service v2.0.3
-ib-backend  |    Compiling crc32fast v1.4.2
-ib-backend  |    Compiling encoding_rs v0.8.35
-ib-backend  |    Compiling tower-service v0.3.3
-ib-backend  |    Compiling unicase v2.8.1
-ib-backend  |    Compiling fastrand v2.3.0
-ib-backend  |    Compiling tempfile v3.19.0
-ib-backend  |    Compiling mime_guess v2.0.5
-ib-backend  |    Compiling sqlx-postgres v0.8.3
-ib-backend  |    Compiling flate2 v1.1.0
-ib-backend  |    Compiling regex v1.11.1
-ib-backend  |    Compiling zstd v0.13.3
-ib-backend  |    Compiling derive_more v2.0.1
-ib-backend  |    Compiling h2 v0.3.26
-ib-backend  |    Compiling actix-codec v0.5.2
-ib-backend  |    Compiling brotli v7.0.0
-ib-backend  |    Compiling rand v0.9.0
-ib-backend  |    Compiling time v0.3.39
-ib-backend  |    Compiling serde_urlencoded v0.7.1
-ib-backend  |    Compiling hyper v1.6.0
-ib-backend  |    Compiling actix-router v0.5.3
-ib-backend  |    Compiling local-channel v0.1.5
-ib-backend  |    Compiling sha1 v0.10.6
-ib-backend  |    Compiling language-tags v0.3.2
-ib-backend  |    Compiling httpdate v1.0.3
-ib-backend  |    Compiling heck v0.5.0
-ib-backend  |    Compiling sqlx-macros-core v0.8.3
-ib-backend  |    Compiling hyper-util v0.1.10
-ib-backend  |    Compiling actix-web-codegen v4.3.0
-ib-backend  |    Compiling actix-http v3.10.0
-ib-backend  |    Compiling actix-server v2.5.1
-ib-backend  |    Compiling tokio-native-tls v0.3.1
-ib-backend  |    Compiling actix-macros v0.2.4
-ib-backend  |    Compiling http-body-util v0.1.3
-ib-backend  |    Compiling sync_wrapper v1.0.2
-ib-backend  |    Compiling impl-more v0.1.9
-ib-backend  |    Compiling rustls-pki-types v1.11.0
-ib-backend  |    Compiling convert_case v0.4.0
-ib-backend  |    Compiling tower-layer v0.3.3
-ib-backend  |    Compiling actix-web v4.10.2
-ib-backend  |    Compiling tower v0.5.2
-ib-backend  |    Compiling derive_more v0.99.19
-ib-backend  |    Compiling sqlx-macros v0.8.3
-ib-backend  |    Compiling rustls-pemfile v2.2.0
-ib-backend  |    Compiling hyper-tls v0.6.0
-ib-backend  |    Compiling ipnet v2.11.0
-ib-backend  |    Compiling reqwest v0.12.14
-ib-backend  |    Compiling actix-cors v0.6.5
-ib-backend  |    Compiling sqlx v0.8.3
-ib-backend  |    Compiling ib-backend v0.1.0 (/app)
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |   --> src/handlers.rs:13:18
-ib-backend  |    |
-ib-backend  | 13 |       let result = sqlx::query_as!(
-ib-backend  |    |  __________________^
-ib-backend  | 14 | |         User,
-ib-backend  | 15 | |         "INSERT INTO users (email, username) VALUES ($1, $2) RETURNING id, email, username, inkbucks, created_at",
-ib-backend  | 16 | |         user.email,
-ib-backend  | 17 | |         user.username
-ib-backend  | 18 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |   --> src/handlers.rs:29:18
-ib-backend  |    |
-ib-backend  | 29 |       let result = sqlx::query_as!(
-ib-backend  |    |  __________________^
-ib-backend  | 30 | |         User,
-ib-backend  | 31 | |         "SELECT id, email, username, inkbucks, created_at FROM users"
-ib-backend  | 32 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |   --> src/handlers.rs:44:18
-ib-backend  |    |
-ib-backend  | 44 |       let result = sqlx::query_as!(
-ib-backend  |    |  __________________^
-ib-backend  | 45 | |         User,
-ib-backend  | 46 | |         "SELECT id, email, username, inkbucks, created_at FROM users WHERE id = $1",
-ib-backend  | 47 | |         user_id
-ib-backend  | 48 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |   --> src/handlers.rs:66:18
-ib-backend  |    |
-ib-backend  | 66 |       let result = sqlx::query!(
-ib-backend  |    |  __________________^
-ib-backend  | 67 | |         "UPDATE users SET email = COALESCE($1, email), username = COALESCE($2, username), inkbucks = COALESCE($3, inkbucks) WHERE id = $4",
-ib-backend  | 68 | |         update.email,
-ib-backend  | 69 | |         update.username,
-ib-backend  | 70 | |         update.inkbucks,
-ib-backend  | 71 | |         user_id
-ib-backend  | 72 | |     )
-ib-backend  |    | |_____^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |   --> src/handlers.rs:85:18
-ib-backend  |    |
-ib-backend  | 85 |     let result = sqlx::query!("DELETE FROM users WHERE id = $1", user_id)
-ib-backend  |    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |    |
-ib-backend  |    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:99:18
-ib-backend  |     |
-ib-backend  | 99  |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 100 | |         IconPack,
-ib-backend  | 101 | |         "INSERT INTO icon_packs (user_id, name) VALUES ($1, $2) RETURNING id, user_id, name, created_at",
-ib-backend  | 102 | |         pack.user_id,
-ib-backend  | 103 | |         pack.name
-ib-backend  | 104 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:115:18
-ib-backend  |     |
-ib-backend  | 115 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 116 | |         IconPack,
-ib-backend  | 117 | |         "SELECT id, user_id, name, created_at FROM icon_packs"
-ib-backend  | 118 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:130:18
-ib-backend  |     |
-ib-backend  | 130 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 131 | |         IconPack,
-ib-backend  | 132 | |         "SELECT id, user_id, name, created_at FROM icon_packs WHERE id = $1",
-ib-backend  | 133 | |         pack_id
-ib-backend  | 134 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:152:18
-ib-backend  |     |
-ib-backend  | 152 |       let result = sqlx::query!(
-ib-backend  |     |  __________________^
-ib-backend  | 153 | |         "UPDATE icon_packs SET name = COALESCE($1, name) WHERE id = $2",
-ib-backend  | 154 | |         update.name,
-ib-backend  | 155 | |         pack_id
-ib-backend  | 156 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:169:18
-ib-backend  |     |
-ib-backend  | 169 |     let result = sqlx::query!("DELETE FROM icon_packs WHERE id = $1", pack_id)
-ib-backend  |     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:183:18
-ib-backend  |     |
-ib-backend  | 183 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 184 | |         Icon,
-ib-backend  | 185 | |         "SELECT id, user_id, icon_pack_id, image_url, metadata, created_at FROM icons"
-ib-backend  | 186 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:238:26
-ib-backend  |     |
-ib-backend  | 238 |               let result = sqlx::query_as!(
-ib-backend  |     |  __________________________^
-ib-backend  | 239 | |                 Icon,
-ib-backend  | 240 | |                 "INSERT INTO icons (user_id, icon_pack_id, image_url, metadata, image_data)
-ib-backend  | 241 | |                  VALUES ($1, $2, $3, $4, $5)
-ib-backend  | ...   |
-ib-backend  | 247 | |                 &image_data
-ib-backend  | 248 | |             )
-ib-backend  |     | |_____________^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:264:11
-ib-backend  |     |
-ib-backend  | 264 |     match sqlx::query!("SELECT image_data FROM icons WHERE id = $1", icon_id)
-ib-backend  |     |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:280:18
-ib-backend  |     |
-ib-backend  | 280 |     let result = sqlx::query!("DELETE FROM icons WHERE id = $1", icon_id)
-ib-backend  |     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:294:18
-ib-backend  |     |
-ib-backend  | 294 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 295 | |         Transaction,
-ib-backend  | 296 | |         "INSERT INTO transactions (user_id, type, icon_id, amount) VALUES ($1, $2, $3, $4) RETURNING id, user_id, type AS \"type_: Transa...
-ib-backend  | 297 | |         tx.user_id,
-ib-backend  | ...   |
-ib-backend  | 300 | |         tx.amount
-ib-backend  | 301 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:312:18
-ib-backend  |     |
-ib-backend  | 312 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 313 | |         Transaction,
-ib-backend  | 314 | |         "SELECT id, user_id, type AS \"type_: TransactionType\", icon_id, amount, created_at FROM transactions"
-ib-backend  | 315 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:327:18
-ib-backend  |     |
-ib-backend  | 327 |       let result = sqlx::query_as!(
-ib-backend  |     |  __________________^
-ib-backend  | 328 | |         Transaction,
-ib-backend  | 329 | |         "SELECT id, user_id, type AS \"type_: TransactionType\", icon_id, amount, created_at FROM transactions WHERE id = $1",
-ib-backend  | 330 | |         tx_id
-ib-backend  | 331 | |     )
-ib-backend  |     | |_____^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | error: `SQLX_OFFLINE=true` but there is no cached data for this query, run `cargo sqlx prepare` to update the query cache or unset `SQLX_OFFLINE`
-ib-backend  |    --> src/handlers.rs:353:18
-ib-backend  |     |
-ib-backend  | 353 |     let result = sqlx::query!("DELETE FROM transactions WHERE id = $1", tx_id)
-ib-backend  |     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ib-backend  |     |
-ib-backend  |     = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
-ib-backend  |
-ib-backend  | warning: unused variable: `pool`
-ib-backend  |    --> src/handlers.rs:344:5
-ib-backend  |     |
-ib-backend  | 344 |     pool: web::Data<PgPool>,
-ib-backend  |     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_pool`
-ib-backend  |     |
-ib-backend  |     = note: `#[warn(unused_variables)]` on by default
-ib-backend  |
-ib-backend  | warning: unused variable: `path`
-ib-backend  |    --> src/handlers.rs:345:5
-ib-backend  |     |
-ib-backend  | 345 |     path: web::Path<Uuid>,
-ib-backend  |     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_path`
-ib-backend  |
-ib-backend  | warning: `ib-backend` (bin "ib-backend") generated 2 warnings
-ib-backend  | error: could not compile `ib-backend` (bin "ib-backend") due to 18 previous errors; 2 warnings emitted
-ib-backend exited with code 101
-db          | 2025-03-17 12:01:48.857 UTC [79] FATAL:  database "ib_usr" does not exist
-db          | 2025-03-17 12:01:54.213 UTC [87] FATAL:  role "ib_db" does not exist
-db          | 2025-03-17 12:01:58.838 UTC [94] FATAL:  role "root" does not exist
+# OUTPUT a3d95f68-60aa-4925-8528-2a64d1519c62
+Great! Let’s build a custom dropdown menu (without using shadcn or any other UI library) where:
 
-# OUTPUT 2ebc298d-d167-48f3-8e5c-38ab92f5b3c1
-From the logs, there are two main issues we need to resolve:
+✅ The user can select a social media platform  
+✅ The dropdown displays the selected icon and name  
+✅ When clicked, the dropdown shows all platform options  
+✅ On selection, the chosen icon and name are shown in the closed state
 
----
+💡 We’ll:
 
-### **Issue 1: `SQLX_OFFLINE=true` but there is no cached data for this query**
-#### **Cause:**
-- `SQLX_OFFLINE=true` is set, which tells `sqlx` to use a cached query plan instead of connecting to the database at compile time.
-- However, there is **no cached query data available**, meaning `cargo sqlx prepare` has never been run.
+- Use Tailwind CSS for basic styles
+- Use React useState and basic DOM events for interaction
+- Maintain a platforms array with icon/name/ID
+- Toggle open/closed dropdown state manually
 
-#### **Solution:**
-1. **Run `cargo sqlx prepare` before building the backend container:**
-   ```sh
-   cd ib-backend
-   cargo install sqlx-cli --no-default-features --features postgres
-   DATABASE_URL=postgres://ib_user:ib_pwd@localhost:5432/ib_db cargo sqlx prepare
-   ```
-   This command generates the necessary cached data in the `target/sqlx` directory.
+✅ Implementation with Icon | Platform Name Dropdown:
 
-2. **Commit the `.sqlx` directory to your project (optional but recommended):**
-   ```sh
-   git add .sqlx
-   git commit -m "Prepared SQLX queries"
-   ```
+Example: components/PlatformSelect.tsx
+```tsx
+import { useState, useRef, useEffect } from "react";
+import { FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
-3. **Rebuild and restart the container:**
-   ```sh
-   docker compose -f docker-compose.dev.yml down -v
-   docker compose -f docker-compose.dev.yml up --build
-   ```
+const platforms = [
+  {
+    id: "twitter",
+    name: "Twitter",
+    icon: <FaTwitter className="text-blue-500" />,
+  },
+  {
+    id: "instagram",
+    name: "Instagram",
+    icon: <FaInstagram className="text-pink-500" />,
+  },
+  {
+    id: "linkedin",
+    name: "LinkedIn",
+    icon: <FaLinkedin className="text-blue-700" />,
+  },
+];
 
----
+export default function PlatformSelect({
+  onSelect,
+}: {
+  onSelect?: (platform: typeof platforms[0]) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(platforms[0]);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-### **Issue 2: `FATAL: database "ib_usr" does not exist` & `role "root" does not exist`**
-#### **Cause:**
-- Your PostgreSQL container does **not have a database or role named `ib_usr` or `root`**.
-- This means the correct database was **not created during initialization**.
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-#### **Solution:**
-- Modify your `docker-compose.dev.yml` file to correctly **align** environment variables:
-```yaml
-services:
-  db:
-    image: postgres:13
-    container_name: db
-    environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    
-  backend:
-    build:
-      context: ./ib-backend
-      dockerfile: Dockerfile
-    environment:
-      - DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
-    depends_on:
-      - db
-    ports:
-      - "8080:8080"
+  // Handle selection
+  const handleSelect = (platform: typeof platforms[0]) => {
+    setSelected(platform);
+    onSelect?.(platform);
+    setIsOpen(false);
+  };
 
-volumes:
-  db-data:
+  return (
+    <div className="relative w-full max-w-xs" ref={wrapperRef}>
+      {/* Trigger */}
+      <button
+        className="w-full bg-primary/30 text-primary border border-primary/20 rounded-full px-4 py-2 flex items-center justify-between shadow-md hover:border-primary transition"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <span className="flex items-center gap-2">
+          {selected.icon}
+          <span>{selected.name}</span>
+        </span>
+        <svg
+          className={`w-4 h-4 ml-2 transform transition-transform ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Dropdown list */}
+      {isOpen && (
+        <ul
+          className="absolute z-50 mt-2 w-full bg-white border border-primary/10 rounded-md shadow-md max-h-[200px] overflow-auto"
+          role="listbox"
+        >
+          {platforms.map((platform) => (
+            <li
+              key={platform.id}
+              onClick={() => handleSelect(platform)}
+              role="option"
+              aria-selected={selected.id === platform.id}
+              className={`px-4 py-2 flex items-center gap-2 hover:bg-primary/10 cursor-pointer ${
+                selected.id === platform.id ? "bg-primary/10" : ""
+              }`}
+            >
+              {platform.icon}
+              <span>{platform.name}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 ```
 
-- **Then reset your PostgreSQL database to apply these changes**:
-  ```sh
-  docker compose -f docker-compose.dev.yml down -v
-  docker compose -f docker-compose.dev.yml up --build
-  ```
+Then use it wherever you need:
 
----
+Example usage:
 
-### **Final Checklist**
-✅ **Run `cargo sqlx prepare` within `ib-backend` before building the container**  
-✅ **Ensure the database (`mydb`) and user (`myuser`) match between `DATABASE_URL` and `docker-compose.dev.yml`**  
-✅ **Rebuild containers with `docker compose down -v` and `docker compose up --build`**  
+```tsx
+import PlatformSelect from "@/components/PlatformSelect";
 
----
+function LandingSection() {
+  const handlePlatformChange = (platform) => {
+    console.log("Selected platform:", platform);
+  };
 
-### **Expected Outcome**
-- **Backend should compile successfully without `SQLX_OFFLINE` errors**.
-- **Database should initialize correctly** and allow the backend to **connect successfully**. 🚀
+  return (
+    <section className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="w-full max-w-md">
+        <h1 className="text-4xl font-bold mb-6 text-center">InkBlink</h1>
+        <PlatformSelect onSelect={handlePlatformChange} />
+      </div>
+    </section>
+  );
+}
+```
+
+🧠 Features Supported:
+
+- Dropdown with icon + platform name
+- Shows selected value in trigger
+- Dropdown closes on outside click
+- Highlights selected value
+
+🪄 Want to animate the dropdown? You could add Tailwind transition classes or use framer-motion optionally.
+
+Let me know if you want:
+
+- Blur background inside dropdown
+- Keyboard navigation
+- Store selected platform in sessionStorage or localStorage
+
+Happy to enhance it!
 
 # ASK MODEL BELLOW

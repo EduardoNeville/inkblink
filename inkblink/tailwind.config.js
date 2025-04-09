@@ -2,6 +2,11 @@ module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
     extend: {
+      backdropBlur: {
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
+      },
       keyframes: {
         'slide-up': {
           '0%': { transform: 'translateY(50%)', opacity: '0' },  // Start slightly below
