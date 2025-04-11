@@ -1,48 +1,67 @@
 import { Button } from "@/components/ui/button"; // shadcn Button component
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 import useEmblaCarousel from "embla-carousel-react";
-import { useCallback } from "react";
-import { ImageTextSection } from "@/components/ImageTextSection";
 import {
   FaTwitter,
   FaInstagram,
   FaLinkedin,
-  FaChevronDown,
   FaImage,
-  FaVideo,
 } from "react-icons/fa";
 import { InkBlobs } from "@/components/InkBlobs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Waypoints } from "lucide-react";
+import TweetCard from "@/components/TweetCard";
 
 // Landing Section Component
-const platforms = [
-  { id: "twitter", name: "Twitter", icon: <FaTwitter className="text-blue-500" /> },
-  { id: "instagram", name: "Instagram", icon: <FaInstagram className="text-pink-500" /> },
-  { id: "linkedin", name: "LinkedIn", icon: <FaLinkedin className="text-blue-700" /> },
+type Platform = {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+};
+
+const platforms: Platform[] = [
+  {
+    id: "twitter",
+    name: "Twitter",
+    icon: <FaTwitter className="text-primary bg-transparent" />,
+  },
+  {
+    id: "instagram",
+    name: "Instagram",
+    icon: <FaInstagram className="text-primary bg-transparent" />,
+  },
+  {
+    id: "linkedin",
+    name: "LinkedIn",
+    icon: <FaLinkedin className="text-primary bg-transparent" />,
+  },
 ];
 
-function PlatformSelect({
-  onSelect,
+function PlatformSelectMulti({
+  onChange,
 }: {
-  onSelect?: (platform: typeof platforms[0]) => void;
+  onChange?: (selected: string[]) => void;
 }) {
+  const [selected, setSelected] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(platforms[0]);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Toggle selection
+  const togglePlatform = (id: string) => {
+    setSelected((prev) => {
+      const updated = prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id];
+      onChange?.(updated);
+      return updated;
+    });
+  };
 
   // Close dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -50,115 +69,131 @@ function PlatformSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle selection
-  const handleSelect = (platform: typeof platforms[0]) => {
-    setSelected(platform);
-    onSelect?.(platform);
-    setIsOpen(false);
-  };
+  // Get selected platform details
+  const selectedPlatforms = platforms.filter((p) => selected.includes(p.id));
 
   return (
-    <div className="relative w-full max-w-xs" ref={wrapperRef}>
-      {/* Trigger */}
+    <div className="relative" ref={dropdownRef}>
+      {/* Trigger button */}
       <button
-        className="w-full bg-primary/30 text-primary border border-primary/20 rounded-full px-4 py-2 flex items-center justify-between shadow-md hover:border-primary transition"
         onClick={() => setIsOpen((prev) => !prev)}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
+        className="flex items-center px-2 py-1 min-h-[40px] rounded-full border border-primary/30 bg-primary/10 hover:border-primary transition-all"
       >
-        <span className="flex items-center gap-2">
-          {selected.icon}
-          <span>{selected.name}</span>
-        </span>
+        {selected.length === 0 ? (
+          <span className="text-sm text-primary"><Waypoints /></span>
+        ) : (
+          <div className="flex">
+            {selectedPlatforms.map((platform) => (
+              <div
+                key={platform.id}
+                className="w-6 h-6 flex items-center justify-center rounded-full bg-blur"
+              >
+                {platform.icon}
+              </div>
+            ))}
+          </div>
+        )}
         <svg
-          className={`w-4 h-4 ml-2 transform transition-transform ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          className={`w-4 h-4 ml-1 transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
+          strokeWidth={2}
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
-      {/* Dropdown list */}
       {isOpen && (
-        <ul
-          className="absolute z-50 mt-2 w-full bg-white border border-primary/10 rounded-md shadow-md max-h-[200px] overflow-auto"
-          role="listbox"
-        >
-          {platforms.map((platform) => (
-            <li
-              key={platform.id}
-              onClick={() => handleSelect(platform)}
-              role="option"
-              aria-selected={selected.id === platform.id}
-              className={`px-4 py-2 flex items-center gap-2 hover:bg-primary/10 cursor-pointer ${
-                selected.id === platform.id ? "bg-primary/10" : ""
-              }`}
-            >
-              {platform.icon}
-              <span>{platform.name}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="absolute left-0 mt-1 bg-primary/10 rounded-md shadow-lg z-50 border border-primary/20">
+          <div>
+            {platforms.map((platform) => {
+              const isChecked = selected.includes(platform.id);
+              return (
+                <button
+                  key={platform.id}
+                  onClick={() => togglePlatform(platform.id)}
+                  className={`w-full flex items-center px-3 py-2 text-sm text-primary hover:bg-primary/10 transition ${
+                    isChecked ? "bg-primary/20" : ""
+                  }`}
+                >
+                  <span className="mr-2">{platform.icon}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );
 }
 
-const LandingSection = () => {
-  const [text, setText] = useState("");
+function LandingSection() {
+  const [postText, setPostText] = useState("");
+  const [platforms, setPlatforms] = useState<string[]>([]);
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const navigate = useNavigate();
+  const user = getAuth().currentUser;
+
+  const handlePost = () => {
+    const prompt = encodeURIComponent(postText);
+    const imageParam = imageFile ? encodeURIComponent(imageFile.name) : "";
+    console.log(platforms)
+
+    if (!user) {
+      navigate(`/signup?prompt=${prompt}&image=${imageParam}&platforms=${platforms}`);
+    } else {
+      navigate(`/create?prompt=${prompt}&image=${imageParam}&platforms=${platforms}`);
+    }
+  };
 
   return (
-    <section className="relative flex justify-center items-center min-h-screen px-4 bg-white">
-      {/* Blurred Background Image */}
-      <InkBlobs />
+    <section className="relative min-h-screen flex items-center justify-center px-4 py-12 bg-white overflow-hidden">
+      <InkBlobs /> 
+      <div className="w-full max-w-2xl flex flex-col space-y-4 text-center">
+        <h1 className="text-4xl font-bold text-primary drop-shadow">InkBlink</h1>
+        <p className="text-muted-foreground text-lg">Turn posts into trends</p>
 
-      {/* Foreground content */}
-      <div className="relative z-10 flex flex-col items-center text-center space-y-6 max-w-2xl w-full">
-        {/* Title */}
-        <h1 className="text-5xl sm:text-6xl font-bold drop-shadow-md text-primary">
-          InkBlink
-        </h1>
-        <p className="text-xl sm:text-2xl text-primary/90 font-light">
-          Turn posts into trends
-        </p>
+        {/* Prompt Row */}
+        <div className="flex w-full gap-3 items-center justify-center">
+          {/* Platform Select */}
+          <PlatformSelectMulti onChange={setPlatforms} />
 
-        {/* Prompt Bar */}
-        <div className="sticky flex flex-col sm:flex-row items-stretch w-full gap-3 mt-8">
-          {/* Social Media Bubble */}
-          <PlatformSelect />
-
-          {/* Input Bubble */}
-          <div className="flex w-full bg-primary/30 text-black rounded-full px-4 py-2 shadow-md items-center gap-3">
-            {/* Attach icon */}
+          {/* Prompt Input */}
+          <div className="flex flex-grow bg-primary/10 rounded-full px-4 py-2 items-center gap-3 transition-all border border-primary/20">
             <div className="flex gap-2 text-primary cursor-pointer">
-              <FaImage className="hover:text-primary/80" />
-              <FaVideo className="hover:text-primary/80" />
+              {/* Image Upload */}
+              <label className="cursor-pointer">
+                <FaImage className="hover:text-primary/80" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                />
+              </label>
             </div>
-            {/* Text input */}
             <input
               type="text"
+              value={postText}
+              onChange={(e) => setPostText(e.target.value)}
               placeholder="Write your best post..."
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="flex-grow outline-none bg-transparent text-sm placeholder:text-primary/80"
+              className="bg-transparent flex-grow outline-none text-sm text-primary placeholder:text-primary/50"
             />
-            {/* Post button */}
-            <Button
-              className="bg-primary text-white rounded-full px-4 py-1 text-sm hover:bg-primary/80 transition"
-              size="sm"
+            <button
+              className="bg-primary text-white px-4 py-1 rounded-full text-sm hover:bg-primary/80 transition"
+              onClick={handlePost}
             >
               Post
-            </Button>
+            </button>
           </div>
         </div>
       </div>
     </section>
   );
-};
+}
 
 // Grid Section Component
 const GridSection = () => {
@@ -326,25 +361,20 @@ const GridSection = () => {
   );
 };
 
-// Angled Image + Text Section Component
-const AngledImageTextSection = () => (
-  <section className="py-8 sm:py-16 bg-gradient-to-br from-primary to-secondary text-primary-foreground relative rounded-lg overflow-hidden">
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="relative z-10 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">Style Your Way</h2>
-        <p className="text-base sm:text-lg font-display max-w-2xl mx-auto">
-          Use InkBucks to tweak colors, sizes, and effects. Make every icon pack uniquely yours.
-        </p>
-      </div>
-      <div className="mt-12 h-64 sm:h-80 bg-accent/20 rounded-lg transform -skew-y-6 flex items-center justify-center">
-        <span className="text-primary-foreground transform skew-y-6">
-          [Placeholder: Animated demo of icon styling process]
-        </span>
-      </div>
-    </div>
-    <div className="absolute inset-0 bg-[url('/blueprint-dots.png')] opacity-10" /> {/* Subtle dot pattern */}
-  </section>
-);
+
+//      <ImageTextSection
+//        title="Generate with Ease"
+//        description="Pick a base style and let InkBlink create a cohesive icon pack in seconds."
+//        imageSide="left"
+//        imageDescription="Screenshot of icon generation interface"
+//      />
+//      <ImageTextSection
+//        title="Edit Like a Pro"
+//        description="Fine-tune your icons with our intuitive editor. Spend InkBucks for premium features."
+//        imageSide="right"
+//        imageDescription="Close-up of icon editing tools"
+//        bgColor="bg-muted"
+//      />
 
 // Main Home Component
 export default function Home() {
@@ -352,20 +382,7 @@ export default function Home() {
     <main className="flex flex-col min-h-screen max-w-7xl mx-auto gap-8 sm:gap-16">
       <LandingSection />
       <GridSection />
-      <ImageTextSection
-        title="Generate with Ease"
-        description="Pick a base style and let InkBlink create a cohesive icon pack in seconds."
-        imageSide="left"
-        imageDescription="Screenshot of icon generation interface"
-      />
-      <AngledImageTextSection />
-      <ImageTextSection
-        title="Edit Like a Pro"
-        description="Fine-tune your icons with our intuitive editor. Spend InkBucks for premium features."
-        imageSide="right"
-        imageDescription="Close-up of icon editing tools"
-        bgColor="bg-muted"
-      />
+      <TweetCard />
     </main>
   );
 }

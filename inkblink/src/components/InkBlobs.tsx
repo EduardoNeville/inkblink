@@ -1,40 +1,42 @@
-import { motion, useAnimation } from "framer-motion";
-import { useEffect } from "react";
+import { motion } from "framer-motion";
 
-const blobVariants = {
+const generateMotion = (delay: number = 0) => ({
   animate: {
-    scale: [1, 1.15, 1],
-    rotate: [0, 10, -10, 0],
+    x: ["0%", "20%", "-10%", "0%"],
+    y: ["0%", "-10%", "15%", "0%"],
+    scale: [1, 1.15, 0.95, 1],
+    rotate: [0, 15, -10, 0],
     transition: {
-      duration: 5,
+      duration: 15 + Math.random() * 10,
       ease: "easeInOut",
       repeat: Infinity,
       repeatType: "mirror",
+      delay,
     },
   },
-};
+});
 
 const blobs = [
-  { top: "10%", left: "20%", size: "350px", color: "bg-pink-400" },
-  { top: "30%", left: "60%", size: "300px", color: "bg-blue-400" },
-  { top: "60%", left: "30%", size: "250px", color: "bg-purple-400" },
-  { top: "40%", left: "50%", size: "200px", color: "bg-yellow-400" },
+  { top: "10%", left: "15%", size: "400px", color: "bg-pink-400" },
+  { top: "30%", left: "60%", size: "350px", color: "bg-blue-400" },
+  { top: "55%", left: "30%", size: "300px", color: "bg-purple-400" },
+  { top: "45%", left: "50%", size: "250px", color: "bg-yellow-400" },
 ];
 
 export const InkBlobs = () => {
   return (
-    <div className="absolute inset-0 overflow-hidden z-0 blur-xl">
-      {blobs.map((blob, index) => (
+    <div className="absolute inset-0 overflow-hidden z-0 blur-2xl pointer-events-none mix-blend-multiply">
+      {blobs.map((blob, idx) => (
         <motion.div
-          key={index}
-          className={`absolute ${blob.color} rounded-full filter mix-blend-multiply pointer-events-none`}
+          key={idx}
+          className={`absolute ${blob.color} opacity-50 rounded-full`}
           style={{
             top: blob.top,
             left: blob.left,
             width: blob.size,
             height: blob.size,
           }}
-          variants={blobVariants}
+          variants={generateMotion(idx * 2)}
           animate="animate"
         />
       ))}

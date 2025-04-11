@@ -1,96 +1,104 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
-  // Handle email/password login
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const prefilledPrompt = searchParams.get("prompt");
+
+  // Sign in with email/password
   const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
-    };
-    const email = target.email.value;
-    const password = target.password.value;
+    const target = e.currentTarget;
+    const email = (target.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (target.elements.namedItem("password") as HTMLInputElement).value;
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const idToken = await userCredential.user.getIdToken();
-      localStorage.setItem("idToken", idToken); // Store token for API requests
-      navigate("/create");
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate(`/create?prompt=${encodeURIComponent(prefilledPrompt || "")}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred during login");
     }
   };
 
-  // Handle email/password signup
+  // Sign up with email/password
   const onSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    const target = e.target as typeof e.target & {
-      name: { value: string };
-      email: { value: string };
-      password: { value: string };
-    };
-    const email = target.email.value;
-    const password = target.password.value;
-    const name = target.name.value;
+    const target = e.currentTarget;
+    const name = (target.elements.namedItem("name") as HTMLInputElement).value;
+    const email = (target.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (target.elements.namedItem("password") as HTMLInputElement).value;
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const idToken = await userCredential.user.getIdToken();
-      await createUserInBackend(idToken, email, name); // Sync with backend
-      localStorage.setItem("idToken", idToken);
-      navigate("/create");
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email,
+        username: name,
+        createdAt: new Date().toISOString(),
+        inkbucks: 5,
+      });
+
+      navigate(`/create?prompt=${encodeURIComponent(prefilledPrompt || "")}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred during signup");
     }
   };
 
-  // Handle Google login/signup
+  // Google Sign-in
   const onGoogleLogin = async () => {
     setError(null);
     const provider = new GoogleAuthProvider();
+
     try {
       const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
-      const email = result.user.email || "";
-      const name = result.user.displayName || "";
-      await createUserInBackend(idToken, email, name); // Sync with backend
-      localStorage.setItem("idToken", idToken);
-      navigate("/create");
+      const user = result.user;
+
+      if (user) {
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          email: user.email || "",
+          username: user.displayName || "",
+          photoURL: user.photoURL || "",
+          provider: "google",
+          createdAt: new Date().toISOString(),
+          inkbucks: 5,
+        }, { merge: true });
+
+        navigate(`/create?prompt=${encodeURIComponent(prefilledPrompt || "")}`);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred with Google login");
     }
   };
 
-  // Send ID token to backend to create or retrieve user
-  const createUserInBackend = async (idToken: string, email: string, name: string) => {
-    const response = await fetch("http://localhost:8000/api/auth", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token: idToken, email, username: name }),
-    });
-    if (!response.ok) {
-      console.log("Response: ", response)
-      throw new Error("Failed to sync user with backend");
-    }
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center p-6 md:p-10 mt-10">
+      {prefilledPrompt && (
+        <div className="mb-4 text-center font-display text-primary/80">
+          <p className="text-sm italic">"{decodeURIComponent(prefilledPrompt)}"</p>
+        </div>
+      )}
       <div className="w-full max-w-3xl">
         <Card className="overflow-hidden p-0">
           <CardContent className="grid md:grid-cols-2">
@@ -121,7 +129,7 @@ export default function Signup() {
                     <div className="relative text-sm text-center text-primary/50 font-display pt-1">
                       <span className="bg-background px-2">Or continue with</span>
                     </div>
-                    <Button variant="outline" className="w-full text-primary" onClick={onGoogleLogin}>
+                    <Button variant="outline" className="w-full text-primary" type="button" onClick={onGoogleLogin}>
                       Login with Google
                     </Button>
                   </form>
@@ -151,7 +159,7 @@ export default function Signup() {
                     <div className="relative text-sm text-center text-primary/50 font-display pt-1">
                       <span className="bg-background px-2">Or sign up with</span>
                     </div>
-                    <Button variant="outline" className="w-full text-primary" onClick={onGoogleLogin}>
+                    <Button variant="outline" className="w-full text-primary" type="button" onClick={onGoogleLogin}>
                       Sign Up with Google
                     </Button>
                   </form>
